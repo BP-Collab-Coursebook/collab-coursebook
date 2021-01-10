@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-22 14:54+0000\n"
+"POT-Creation-Date: 2021-01-10 18:36+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,79 +17,149 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: content/models.py:9
-msgid "YouTube Video"
-msgstr "YouTube-Video"
-
-#: content/models.py:12
-msgid "YouTube Video Content"
-msgstr "Inhalt: YouTube-Video"
-
-#: content/models.py:13
-msgid "YouTube Video Contents"
-msgstr "Inhalte: YouTube-Videos"
-
-#: content/models.py:15 content/models.py:34
+#: .\models.py:26
 msgid "Content"
 msgstr "Inhalt"
 
-#: content/models.py:16
-msgid "Video URL"
-msgstr "Video-URL"
+#: .\models.py:33 .\models.py:148
+msgid "Pdf"
+msgstr "Pdf"
 
-#: content/models.py:28
-msgid "Single Image"
-msgstr "Einzelnes Bild"
-
-#: content/models.py:31
-msgid "Image Content"
-msgstr "Inhalt: Bild"
-
-#: content/models.py:32
-msgid "Image Contents"
-msgstr "Inhalte: Bilder"
-
-#: content/models.py:35
-msgid "Image"
-msgstr "Bild"
-
-#: content/models.py:36 content/templates/content/view/Image.html:5
+#: .\models.py:52 .\models.py:125 .\models.py:140
+#: .\templates\content\view\AttachedImage.html:5
+#: .\templates\content\view\Image.html:5 .\templates\content\view\Latex.html:10
+#: .\templates\content\view\Pdf.html:13
+#: .\templates\content\view\Textfield.html:9
 msgid "Source"
 msgstr "Quelle"
 
-#: content/models.py:37 content/templates/content/view/Image.html:9
+#: .\models.py:53 .\templates\content\view\AttachedImage.html:9
+#: .\templates\content\view\Image.html:9 .\templates\content\view\Pdf.html:17
 msgid "License"
 msgstr "Lizenz"
 
-#: content/templates/content/view/YouTubeVideo.html:5
-msgid "View on YouTube"
-msgstr "Auf YouTube ansehen"
+#: .\models.py:58
+msgid "YouTube Video"
+msgstr "YouTube-Video"
 
-#: content/templates/content/view/invalid.html:4
-msgid "Invalid type"
-msgstr "Invalider Typ"
+#: .\models.py:61
+msgid "YouTube Video Content"
+msgstr "Inhalt: YouTube-Video"
 
-#: content/models.py:62
-msgid "Image Attachment"
-msgstr "Bildanhang"
+#: .\models.py:62
+msgid "YouTube Video Contents"
+msgstr "Inhalte: YouTube-Videos"
 
-#: content/models.py:63
+#: .\models.py:64
+msgid "Video URL"
+msgstr "Video-URL"
+
+#: .\models.py:76 .\models.py:90 .\models.py:93
+msgid "Single Image"
+msgstr "Einzelnes Bild"
+
+#: .\models.py:79
+msgid "Image Content"
+msgstr "Inhalt: Bild"
+
+#: .\models.py:80
+msgid "Image Contents"
+msgstr "Inhalte: Bilder"
+
+#: .\models.py:82
+msgid "Image"
+msgstr "Bild"
+
+#: .\models.py:94
+#, fuzzy
+#| msgid "Single Image"
+msgid "Single Images"
+msgstr "Einzelnes Bild"
+
+#: .\models.py:96
+msgid "Attached Image"
+msgstr "angehängtes Bild"
+
+#: .\models.py:104
 msgid "Single Image Attachment"
 msgstr "Einzelner Bildanhang"
 
-#: content/models.py:66
-msgid "Image Attachment in Content"
-msgstr "Bildanhang als Inhalt"
+#: .\models.py:107
+msgid "Image Attachment"
+msgstr "Bildanhang"
 
-#: content/models.py:67
-msgid "Image Attachments in Content"
-msgstr "Bildanhänge als Inhalt"
+#: .\models.py:108
+#, fuzzy
+#| msgid "Image Attachment"
+msgid "Image Attachments"
+msgstr "Bildanhang"
 
+#: .\models.py:110
+#, fuzzy
+#| msgid "Image"
+msgid "Images"
+msgstr "Bild"
 
-#: content/models.py:87
+#: .\models.py:118
+#, fuzzy
+#| msgid "Textfield Content"
+msgid "Textfield"
+msgstr "Textfeldinhalt"
+
+#: .\models.py:121
 msgid "Textfield Content"
 msgstr "Textfeldinhalt"
 
-#: content/models.py:88
+#: .\models.py:122
 msgid "Textfield Contents"
 msgstr "Textfeldinhalte"
+
+#: .\models.py:124
+msgid "Text"
+msgstr "Text"
+
+#: .\models.py:133
+msgid "Latex Textfield"
+msgstr "Latex-Textfeld"
+
+#: .\models.py:136
+#, fuzzy
+#| msgid "Image Content"
+msgid "Latex Content"
+msgstr "Inhalt: LaTeX"
+
+#: .\models.py:137
+#, fuzzy
+#| msgid "Image Contents"
+msgid "Latex Contents"
+msgstr "Inhalte: Bilder"
+
+#: .\models.py:139
+msgid "Latex Code"
+msgstr "LaTeX-Code"
+
+#: .\models.py:151
+#, fuzzy
+#| msgid "Content"
+msgid "Pdf Content"
+msgstr "Inhalt: Pdf"
+
+#: .\models.py:152
+#, fuzzy
+#| msgid "Content"
+msgid "Pdf Contents"
+msgstr "Inhalt: Pdf"
+
+#: .\templates\content\view\YouTubeVideo.html:5
+msgid "View on YouTube"
+msgstr "Auf YouTube ansehen"
+
+#: .\templates\content\view\invalid.html:4
+msgid "Invalid type"
+msgstr "Invalider Typ"
+
+#~ msgid "Image Attachment in Content"
+#~ msgstr "Bildanhang im Inhalt"
+
+#~ msgid "Image Attachments in Content"
+#~ msgstr "Bildanhänge im Inhalt"
