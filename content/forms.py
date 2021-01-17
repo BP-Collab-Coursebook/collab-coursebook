@@ -94,7 +94,6 @@ class AddContentFormPdf(forms.ModelForm):
         }
 
 
-
 class AddTextField(forms.ModelForm):
     """Add text field
 
@@ -150,34 +149,14 @@ class AddLatex(forms.ModelForm):
         widgets = {
             'source': forms.Textarea(attrs={'style': 'height: 100px', 'placeholder': 'https://ctan.org/pkg/lipsum'}),
             'textfield': forms.Textarea(
-                attrs={'placeholder': 'Quisque ullamcorper placerat ipsum. '
-                                      'Cras nibh. Morbi vel justo vitae lacus tincidunt ultrices. '
-                                      'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. '
-                                      'In hac habitasse platea dictumst. Integer tempus convallis augue. '
-                                      'Etiam facilisis. Nunc elementum fermentum wisi. Aenean placerat. '
-                                      'Ut imperdiet, enim sed gravida sollicitudin, felis odio placerat quam, '
-                                      'ac pulvinar elit purus eget enim. Nunc vitae tortor. Proin tempus nibh sit '
-                                      'amet nisl. '
-                                      'Vivamus quis tortor vitae risus porta vehicula. \\br '
-                                      'Fusce mauris. Vestibulum '
-                                      'luctus nibh at lectus. Sed bibendum, nulla a faucibus semper, '
-                                      'leo velit ultricies tellus, ac venenatis arcu wisi vel nisl. Vestibulum diam. '
-                                      'Aliquam pellentesque, augue quis sagittis posuere, turpis lacus congue quam, '
-                                      'in hendrerit risus eros eget felis. Maecenas eget erat in sapien mattis '
-                                      'porttitor. Vestibulum porttitor. Nulla facilisi. Sed a turpis eu lacus commodo '
-                                      'facilisis. Morbi fringilla, wisi in dignissim interdum, justo lectus sagittis '
-                                      'dui, et vehicula libero dui cursus dui. Mauris tempor ligula sed lacus. Duis '
-                                      'cursus enim ut augue. Cras ac magna. Cras nulla. Nulla egestas. Curabitur a '
-                                      'leo. Quisque egestas wisi eget nunc. Nam feugiat lacus vel est. Curabitur '
-                                      'consectetuer. \\br '
-                                      'Suspendisse vel felis. Ut lorem lorem, interdum eu, '
-                                      'tincidunt sit amet, laoreet vitae, arcu. Aenean faucibus pede eu ante. '
-                                      'Praesent enim elit, rutrum at, molestie non, nonummy vel, nisl. Ut lectus '
-                                      'eros, malesuada sit amet, fermentum eu, sodales cursus, magna. Donec eu purus. '
-                                      'Quisque vehicula, urna sed ultricies auctor, pede lorem egestas dui, '
-                                      'et convallis elit erat sed nulla. Donec luctus. Curabitur et nunc. Aliquam '
-                                      'dolor odio, commodo pretium, ultricies non, pharetra in, velit. Integer arcu '
-                                      'est, nonummy in, fermentum faucibus, egestas vel, odio.'})
+                attrs={
+                    'placeholder': 'This is a matrix \\\\ \n '
+                                   '$ M = \\begin{pmatrix} 1 & 2 & 3\\\\ a & b & c \\end{ pmatrix}$ \\\\ \n'
+                                   'This is a table \\\\ \n '
+                                   '\\begin{center} \n \\begin{tabular} {||c c c c||} \n \\hline'
+                                   'Col1 & Col2 & Col2 & Col3 \\\\ [0.5ex] \n \\hline \n \\hline \n '
+                                   '1 & 6 & 87837 & 787 \\\\ \n \\hline \n'
+                                   '\\end{tabular} \n \\end{center}'})
         }
 
 
