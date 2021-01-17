@@ -219,8 +219,17 @@ class EditContentView(LoginRequiredMixin, UpdateView):
 
             # Check form validity and update both forms/associated models
             if form.is_valid() and content_type_form.is_valid():
-                form.save()
+                content = form.save()
+                content_type = content.type
                 content_object = content_type_form.save()
+
+                # If the content type is Latex, compile the Latex Code and store in DB
+                if content_type == 'Latex':
+                    topic = Topic.objects.get(pk=kwargs['topic_id'])
+                    pdf = generate_pdf_response(get_user(self.request), topic, content)
+                    content_object.pdf.save(f"{topic}" + ".pdf", ContentFile(pdf))
+                    content_object.save()
+                    
                 content_object.generate_preview()
                 messages.add_message(self.request, messages.SUCCESS, _("Content updated"))
                 return HttpResponseRedirect(self.get_success_url())
