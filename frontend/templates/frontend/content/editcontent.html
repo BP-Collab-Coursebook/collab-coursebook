@@ -6,6 +6,7 @@
 {% load fontawesome_5 %}
 {% load static %}
 {% load i18n %}
+{% load widget_tweaks %}
 
 {% block imports %}
     <link href="{% static 'css/content_detail.css' %}" type="text/css" rel="stylesheet"/>
@@ -14,8 +15,9 @@
 {% block content %}
     <form method="post" enctype=multipart/form-data>
         {% csrf_token %}
-        {% bootstrap_form form %}
-        {% bootstrap_form content_type_form %}
+        {% bootstrap_form form%}
+        {% bootstrap_form content_type_form%}
+
 
         {{ form.media }}
         <div>

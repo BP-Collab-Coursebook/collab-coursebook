@@ -197,6 +197,7 @@ class EditContentView(LoginRequiredMixin, UpdateView):
         # Add form only to context data if not already in it (when passed by post method containing error messages)
         if not 'content_type_form' in context:
             content_type = self.get_object().type
+            print(content_type)
             if content_type in CONTENT_TYPE_FORMS:
                 content_file = CONTENT_TYPES[content_type].objects.get(pk=self.get_object().pk)
                 context['content_type_form'] = CONTENT_TYPE_FORMS.get(content_type)(instance=content_file)
