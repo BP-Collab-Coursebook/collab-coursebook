@@ -1,7 +1,7 @@
 
 class GeneratePreviewMixin:
     """
-    Provides method to generate preview images.
+    Provides method to generate Preview Images
     """
     def generate_preview(self):
         return

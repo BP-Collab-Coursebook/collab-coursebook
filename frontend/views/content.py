@@ -1,24 +1,20 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, Http404, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy, reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-from export.views import generate_pdf_response
-from django.core.files.base import ContentFile
-from django.views.generic import DetailView, CreateView, UpdateView
+from django.views.generic import DetailView, CreateView
 
-from base.models import Content, Comment, Course, Topic, Favorite
+from base.models import Content, Comment, Course, Topic, Favorite, Rating, Profile
 
 from base.utils import get_user
-from content.models import CONTENT_TYPES
 from frontend.forms import CommentForm, TranslateForm
 from frontend.forms.addcontent import AddContentForm
-from content.forms import CONTENT_TYPE_FORMS, AddContentFormAttachedImage, SingleImageFormSet
-from content.models import CONTENT_TYPES, IMAGE_ATTACHMENT_TYPES, SingleImage, ImageAttachment
-
+from content.forms import CONTENT_TYPE_FORMS
+from content.models import CONTENT_TYPES
 
 class AddContentView(SuccessMessageMixin, LoginRequiredMixin, CreateView):  # pylint: disable=too-many-ancestors
     """
@@ -28,7 +24,6 @@ class AddContentView(SuccessMessageMixin, LoginRequiredMixin, CreateView):  # py
     template_name = 'frontend/content/addcontent.html'
     form_class = AddContentForm
     success_url = reverse_lazy('frontend:dashboard')
-    context_object_name = 'content'
 
     def get_success_message(self, cleaned_data):
         return _(f"Content '{cleaned_data['type']}' successfully added")
@@ -44,7 +39,6 @@ class AddContentView(SuccessMessageMixin, LoginRequiredMixin, CreateView):  # py
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # retrieve form for content type
         if "type" in self.kwargs:
             content_type = self.kwargs['type']
             if content_type in CONTENT_TYPE_FORMS:
@@ -53,26 +47,10 @@ class AddContentView(SuccessMessageMixin, LoginRequiredMixin, CreateView):  # py
                 return self.handle_error()
         else:
             return self.handle_error()
-
-        # check if attachments are allowed for given content type
-        context['attachment_allowed'] = content_type in IMAGE_ATTACHMENT_TYPES
-
-        # retrieve attachment_form
-        context['attachment_form'] = AddContentFormAttachedImage
-
-        # retrieve parameters
-        course = Course.objects.get(pk=self.kwargs['course_id'])
-        context['course'] = course
-
-        # setup formset
-        formset = SingleImageFormSet(queryset=SingleImage.objects.none())
-        context['item_forms'] = formset
-
         return context
 
     def post(self, request, *args, **kwargs):
-
-        # retrieve content type form
+        add_content_form = AddContentForm(request.POST)
         if "type" in self.kwargs:
             content_type = self.kwargs['type']
             if content_type in CONTENT_TYPE_FORMS:
@@ -82,14 +60,7 @@ class AddContentView(SuccessMessageMixin, LoginRequiredMixin, CreateView):  # py
         else:
             return self.handle_error()
 
-        # read input from all included forms
-        add_content_form = AddContentForm(request.POST)
-        attachment_form = AddContentFormAttachedImage(request.POST, request.FILES)
-        image_formset = SingleImageFormSet(request.POST, request.FILES)
-
-        # check if content forms are valid
         if add_content_form.is_valid() and content_type_form.is_valid():
-
             # save author etc.
             content = add_content_form.save(commit=False)
             content.author = get_user(self.request)
@@ -97,49 +68,15 @@ class AddContentView(SuccessMessageMixin, LoginRequiredMixin, CreateView):  # py
             content.topic = Topic.objects.get(pk=topic_id)
             content.type = content_type
             content.save()
-
-            # evaluate generic form
+            # save generic form. Image, YT video etc.
             content_type_data = content_type_form.save(commit=False)
             content_type_data.content = content
+
             content_type_data.save()
-
-            # If the content type is Latex, compile the Latex Code and store in DB
-            if content_type == 'Latex':
-                topic = Topic.objects.get(pk=kwargs['topic_id'])
-                pdf = generate_pdf_response(get_user(self.request), topic, content)
-                content_type_data.pdf.save(f"{topic}" + ".pdf", ContentFile(pdf))
-                content_type_data.save()
-
-            # Check if attachments are allowed for the given content type
-            if content_type in IMAGE_ATTACHMENT_TYPES:
-                if attachment_form.is_valid():
-
-                    # evaluate the attachment form
-                    content_attachment = attachment_form.save(commit=False)
-                    content_attachment.save()
-                    content.attachment = content_attachment
-                    images = []
-
-                    # evaluate all forms of the formset and append to image set
-                    if image_formset.is_valid():
-                        for f in image_formset:
-                            used_form = f.save(commit=False)
-                            used_form.save()
-                            images.append(used_form)
-                    else:
-                        return self.form_invalid(image_formset)
-
-                    # store the attached images in DB
-                    content.attachment.images.set(images)
-                else:
-                    return self.form_invalid(attachment_form)
-
             # generate preview image in 'uploads/contents/'
             preview = CONTENT_TYPES.get(content_type).objects.get(pk=content.pk).generate_preview()
             content.preview.name = preview
             content.save()
-
-            # Redirect to content
             course_id = self.kwargs['course_id']
             topic_id = self.kwargs['topic_id']
             return HttpResponseRedirect(reverse_lazy('frontend:content', args=(course_id, topic_id, content.id,)))
@@ -149,86 +86,6 @@ class AddContentView(SuccessMessageMixin, LoginRequiredMixin, CreateView):  # py
             return self.form_invalid(add_content_form)
         # content_type_form invalid
         return self.form_invalid(content_type_form)
-
-
-class EditContentView(LoginRequiredMixin, UpdateView):
-    model = Content
-    template_name = 'frontend/content/editcontent.html'
-    form_class = AddContentForm
-
-    def get_content_url(self):
-        """
-        get the url of the content page
-        :return: url of the content page
-        """
-        course_id = self.kwargs['course_id']
-        topic_id = self.kwargs['topic_id']
-        content_id = self.get_object().pk
-        return reverse('frontend:content', args=(course_id, topic_id, content_id,))
-
-    def get_success_url(self):
-        return self.get_content_url()
-
-    def dispatch(self, request, *args, **kwargs):
-        user = get_user(request)
-        if self.get_object().readonly:
-            # only admins and the content owner can edit the content
-            if self.get_object().author == user or request.user.is_superuser:
-                return super().dispatch(request, *args, **kwargs)
-            else:
-                messages.error(request, _('You are not allowed to edit this content'))
-                return HttpResponseRedirect(self.get_content_url())
-        else:
-            # everyone can edit the content
-            return super().dispatch(request, *args, **kwargs)
-
-    def handle_error(self):
-        """
-        create error message and return to course page
-        """
-        course_id = self.kwargs['course_id']
-        messages.error(self.request, _('An error occurred while processing the request'))
-        return HttpResponseRedirect(reverse('frontend:course', args=(course_id,)))
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['course_id'] = self.kwargs['course_id']
-        context['topic_id'] = self.kwargs['topic_id']
-
-        # Add form only to context data if not already in it (when passed by post method containing error messages)
-        if not 'content_type_form' in context:
-            content_type = self.get_object().type
-            if content_type in CONTENT_TYPE_FORMS:
-                content_file = CONTENT_TYPES[content_type].objects.get(pk=self.get_object().pk)
-                context['content_type_form'] = CONTENT_TYPE_FORMS.get(content_type)(instance=content_file)
-            else:
-                return self.handle_error()
-        return context
-
-    def post(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        form = self.get_form()
-
-        if self.object.type in CONTENT_TYPE_FORMS:
-            # Bind/init form with existing data
-            content_object = CONTENT_TYPES[self.object.type].objects.get(pk=self.get_object().pk)
-            # Careful: Order is important for file fields (instance first, afterwards form data,
-            # if using kwargs dict as single argument instead, instance information will not be parsed in time)
-            content_type_form = CONTENT_TYPE_FORMS.get(self.object.type)(instance=content_object, data=self.request.POST, files=self.request.FILES)
-
-            # Check form validity and update both forms/associated models
-            if form.is_valid() and content_type_form.is_valid():
-                form.save()
-                content_object = content_type_form.save()
-                content_object.generate_preview()
-                messages.add_message(self.request, messages.SUCCESS, _("Content updated"))
-                return HttpResponseRedirect(self.get_success_url())
-
-            # Don't save and render error messages for both forms
-            return self.render_to_response(self.get_context_data(form=form, content_type_form=content_type_form))
-
-        # Redirect to error page (should not happen for valid content types)
-        return self.handle_error()
 
 
 class ContentView(DetailView):  # pylint: disable=too-many-ancestors
@@ -343,45 +200,6 @@ class ContentView(DetailView):  # pylint: disable=too-many-ancestors
 
         context['favorite'] = Favorite.objects.filter(course=course, user=get_user(self.request),
                                                       content=content).count() > 0
-        context['attachment'] = content.attachment
-
-        return context
-
-
-class AttachedImageView(DetailView):
-    """
-    Displays the attached image to the user
-    """
-    model = SingleImage
-    template_name = "content/view/AttachedImage.html"
-
-    context_object_name = 'SingleImage'
-
-    def get_context_data(self, **kwargs):
-        """
-        get context data
-        :param dict kwargs: keyword arguments
-        :return: context
-        :rtype: dict
-        """
-        context = super().get_context_data(**kwargs)
-
-        # retrieve parameters
-        course = Course.objects.get(pk=self.kwargs['course_id'])
-        context['course'] = course
-
-        topic = Topic.objects.get(pk=self.kwargs['topic_id'])
-        context['topic'] = topic
-
-        content = Content.objects.get(pk=self.kwargs['content_id'])
-        context['content'] = content
-
-        attachment = ImageAttachment.objects.get(pk=self.kwargs['imageattachment_id'])
-        context['attachment'] = attachment
-
-        context['isCurrentUserOwner'] = self.request.user.profile in course.owners.all()
-        context['translate_form'] = TranslateForm()
-
         return context
 
 
