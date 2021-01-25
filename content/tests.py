@@ -16,7 +16,7 @@ from django.urls import reverse
 
 from base.models.content import Category, Course, Topic
 
-from content.models import ImageAttachment
+import content.models as model
 
 # Media directory for testing purpose
 MEDIA_ROOT = tempfile.mkdtemp()
@@ -102,7 +102,7 @@ class ImageAttachmentTestCase(TestCase):
             'source': 'src',
         }
         self.post_redirects_to_content(path, data)
-        self.assertEqual(ImageAttachment.objects.count(), 1)
-        content = ImageAttachment.objects.first()
+        self.assertEqual(model.ImageAttachment.objects.count(), 1)
+        content = model.ImageAttachment.objects.first()
         self.assertTrue(bool(content.image))
         self.assertEqual(content.source, "src")
