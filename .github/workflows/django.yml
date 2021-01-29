@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  build_latex:
+  build:
 
     runs-on: ubuntu-latest
     strategy:
