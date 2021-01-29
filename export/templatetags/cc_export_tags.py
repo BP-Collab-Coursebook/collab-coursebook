@@ -1,55 +1,30 @@
-"""Purpose of this file
-
-This file describes the configuration of exports including the templates
-and if necessary the escape characters.
-"""
-
 import os
 import re
 
 from django import template
 from django.template.defaultfilters import stringfilter
-
 from content.models import CONTENT_TYPES
-
 import content
 
 register = template.Library()
 
 
 @register.filter
-def export_template(type_t):
-    """Export template
-
-    Validate the type and retrieve the suitable template.
-
-    returns: the path of the template
-    rtype: str
-    """
+def export_template(type):
     base_path = os.path.dirname(content.__file__)
-    path = base_path + "/templates/content/export"
-
-    # Type must be a content type or the error type for an invalid latex compilation
-    if type_t in CONTENT_TYPES.keys() or type_t == 'error':
-        return path + f"/{type_t}.tex"
+    path = base_path + f"/templates/content/export"
+    if type in CONTENT_TYPES.keys():
+        return path + f"/{type}.tex"
     return path + "/invalid.tex"
 
 
 @register.filter
 @stringfilter
 def tex_escape(value):
-    """Escape characters
-
-    Defines the escape characters with special meaning in LaTeX and replace them.
-
+    """Escape characters with special meaning in LaTeX.
     https://github.com/d120/pyophase/blob/master/ophasebase/templatetags/tex_escape.py
-    Retrieved: 10.08.2020
-
-    Parameters:
-        value
+    retrieved: 10.08.2020
     """
-
-    # Dict: Replacements - Escape characters
     replacements = {
         '&': r'\&',
         '%': r'\%',
@@ -63,8 +38,6 @@ def tex_escape(value):
         '\\': r'\textbackslash{}',
         '<': r'\textless{}',
         '>': r'\textgreater{}',
-        '\n': r'\newline '
     }
-
     regex = re.compile('|'.join(re.escape(key) for key in replacements))
     return regex.sub(lambda match: replacements[match.group()], value)

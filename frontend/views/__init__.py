@@ -1,9 +1,3 @@
-"""Purpose of this file
-
-Marks this directory as Python package directories. This package contains
-frontend views related operation.
-"""
-
 from .page import StartView, DashboardView
 from .profile import ProfileView, ProfileEditView
 from .courses import CourseListView, CourseListForCategoryView, CourseListForPeriodView
