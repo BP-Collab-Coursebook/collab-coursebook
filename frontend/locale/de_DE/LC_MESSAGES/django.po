@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-10 23:00+0100\n"
+"POT-Creation-Date: 2020-06-22 14:54+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,81 +17,74 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: .\forms\comment.py:31
+#: frontend/forms/comment.py:31
 msgid "Your Comment"
 msgstr "Dein Kommentar"
 
-#: .\templates\frontend\base.html:28
-#, fuzzy
-#| msgid "Are you sure you want to delete the following comment?"
-msgid ""
-"Are you sure you want to change the language now? This will clear the form!"
-msgstr "Soll der folgende Kommentar wirklich gelöscht werden?"
-
-#: .\templates\frontend\base.html:57
+#: frontend/templates/frontend/base.html:36
 msgid "Impress"
 msgstr "Impressum"
 
-#: .\templates\frontend\base.html:60
+#: frontend/templates/frontend/base.html:39
 msgid "This software is open source"
 msgstr "Diese Software ist Open Source"
 
-#: .\templates\frontend\comment\delete_confirm.html:12
+#: frontend/templates/frontend/comment/delete_confirm.html:12
 msgid "Are you sure you want to delete the following comment?"
 msgstr "Soll der folgende Kommentar wirklich gelöscht werden?"
 
-#: .\templates\frontend\content\addcontent.html:47
-#: .\templates\frontend\course\create.html:29
-#: .\templates\frontend\course\duplicate.html:29
-#: .\templates\frontend\course\edit.html:29
+#: frontend/templates/frontend/content/addcontent.html:23
+#: frontend/templates/frontend/course/create.html:29
+#: frontend/templates/frontend/course/duplicate.html:29
+#: frontend/templates/frontend/course/edit.html:29
 msgid "Create"
 msgstr "Erzeugen"
 
-#: .\templates\frontend\content\addcontent.html:48
-#: .\templates\frontend\content\detail.html:112
+#: frontend/templates/frontend/content/addcontent.html:24
+#: frontend/templates/frontend/content/detail.html:88
 #: frontend/templates/frontend/content/editcontent.html:24
-#: frontend/templates/frontend/course/create.html:32
-#: frontend/templates/frontend/course/duplicate.html:32
-#: frontend/templates/frontend/course/edit.html:32
+#: frontend/templates/frontend/course/create.html:30
+#: frontend/templates/frontend/course/duplicate.html:30
+#: frontend/templates/frontend/course/edit.html:30
 #: frontend/templates/frontend/profile/profile_edit.html:19
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: .\templates\frontend\content\detail.html:20
-#: .\templates\frontend\course\view.html:24
+#: frontend/templates/frontend/content/detail.html:18
+#: frontend/templates/frontend/course/view.html:24
 msgid "Actions"
 msgstr "Aktionen"
 
-#: frontend/templates/frontend/content/detail.html:45
-#: frontend/templates/frontend/content/detail.html:48
-#: frontend/templates/frontend/course/coursebook.html:18
+#: frontend/templates/frontend/content/detail.html:27
+#: frontend/templates/frontend/content/detail.html:29
+#: frontend/templates/frontend/course/coursebook.html:16
 #, fuzzy
 #| msgid "Courses"
 msgid "Coursebook"
 msgstr "Kurse"
 
-#: frontend/templates/frontend/content/detail.html:55
-#: frontend/templates/frontend/profile/profile.html:12
+#: frontend/templates/frontend/content/detail.html:36
+#: frontend/templates/frontend/profile/profile.html:11
 msgid "Edit"
 msgstr "Bearbeiten"
 
-#: frontend/templates/frontend/content/detail.html:74
+#: frontend/templates/frontend/content/detail.html:51
 msgid "Back to course "
 msgstr "Zurück zum Kurs "
 
-#: frontend/templates/frontend/content/detail.html:80
+#: frontend/templates/frontend/content/detail.html:57
 msgid "By"
 msgstr "Von"
 
-#: frontend/templates/frontend/content/detail.html:90
+#: frontend/templates/frontend/content/detail.html:67
 msgid "Created at"
 msgstr "Erstellt am"
 
-#: frontend/templates/frontend/content/detail.html:99
+#: frontend/templates/frontend/content/detail.html:75
 msgid "Delete"
 msgstr "Löschen"
 
-#: frontend/templates/frontend/content/detail.html:104
+#: frontend/templates/frontend/content/detail.html:79
 #, python-format
 msgid ""
 "\n"
@@ -104,19 +97,20 @@ msgstr ""
 "Diese Aktion kann nicht rückgängig gemacht werden.\n"
 "                        "
 
-#: frontend/templates/frontend/content/detail.html:115
+#: frontend/templates/frontend/content/detail.html:91
 msgid "Confirm"
 msgstr "Bestätigen"
 
-#: frontend/templates/frontend/content/detail.html:150
+#: frontend/templates/frontend/content/detail.html:107
+#: frontend/templates/frontend/course/topic_contents.html:29
 msgid "Rating"
 msgstr "Bewertung"
 
-#: frontend/templates/frontend/content/detail.html:165
+#: frontend/templates/frontend/content/detail.html:117
 msgid "Comments"
 msgstr "Kommentare"
 
-#: frontend/templates/frontend/content/detail.html:172
+#: frontend/templates/frontend/content/detail.html:123
 msgid "Add comment"
 msgstr "Kommentar hinzufügen"
 
@@ -124,222 +118,201 @@ msgstr "Kommentar hinzufügen"
 msgid "Save"
 msgstr "Speichern"
 
-#: frontend/templates/frontend/content/readingmode.html:10
+#: frontend/templates/frontend/content/readingmode.html:9
 msgid "Close"
 msgstr "Schließen"
 
-#: .\templates\frontend\content\readingmode.html:12
+#: frontend/templates/frontend/content/readingmode.html:12
 msgid "Next"
 msgstr "Nächste"
 
-#: .\templates\frontend\content\readingmode.html:14
+#: frontend/templates/frontend/content/readingmode.html:14
 msgid "Previous"
 msgstr "Vorherige"
 
-#: .\templates\frontend\course\coursebook.html:10
+#: frontend/templates/frontend/course/coursebook.html:10
 msgid "Export"
 msgstr "Exportieren"
 
-#: .\templates\frontend\course\coursebook.html:22
+#: frontend/templates/frontend/course/coursebook.html:22
 #, fuzzy
 #| msgid "Your Courses"
 msgid "Your coursebook is empty"
 msgstr "Dein Kursbuch ist leer"
 
-#: .\templates\frontend\course\create.html:11
-#: .\templates\frontend\course_lists\card_create_course.html:20
+#: frontend/templates/frontend/course/create.html:11
 msgid "Create a new course"
 msgstr "Neuen Kurs anlegen"
 
-#: .\templates\frontend\course\dropdown_topic.html:10
+#: frontend/templates/frontend/course/dropdown_topic.html:10
 msgid "Add Content"
 msgstr "Inhalte hinzufügen"
 
-#: .\templates\frontend\course\duplicate.html:11
-#: .\templates\frontend\course\duplicate.html:19
-#: .\templates\frontend\course\view.html:31
+#: frontend/templates/frontend/course/duplicate.html:11
+#: frontend/templates/frontend/course/duplicate.html:19
+#: frontend/templates/frontend/course/view.html:31
 msgid "Duplicate Course"
 msgstr "Kurs duplizieren"
 
-#: .\templates\frontend\course\edit.html:11
+
+#: frontend/templates/frontend/course/edit.html:11
 msgid "Edit course"
 msgstr "Kurs bearbeiten"
 
-#: .\templates\frontend\course\view.html:35
+#: frontend/templates/frontend/course/view.html:35
 msgid "Edit Course"
 msgstr "Kurs hinzufügen"
 
-#: .\templates\frontend\course\view.html:36
+#: frontend/templates/frontend/course/view.html:36
 msgid "Delete Course"
 msgstr "Kurs löschen"
 
-#: .\templates\frontend\course\view.html:79
+#: frontend/templates/frontend/course/view.html:76
 msgid "No topics yet"
 msgstr "Bisher keine Themen"
 
-#: .\templates\frontend\course\view.html:108
-msgid "sort by:"
-msgstr "sortiert nach"
-
-#: .\templates\frontend\course\view.html:134
-#, fuzzy
-#| msgid "No topics yet"
-msgid "No Topics"
-msgstr "Bisher keine Themen"
-
-#: .\templates\frontend\course\view.html:135
-msgid "This course doesn't have topics at the moment."
-msgstr "Der Kurs hat momentan keine Themen."
-
-#: .\templates\frontend\course_lists\card_category.html:32
-#: .\templates\frontend\course_lists\card_period.html:23
-#: .\templates\frontend\course_lists\courses.html:12
+#: frontend/templates/frontend/course_lists/card_category.html:32
+#: frontend/templates/frontend/course_lists/card_period.html:23
+#: frontend/templates/frontend/course_lists/courses.html:12
 msgid "Courses"
 msgstr "Kurse"
 
-#: .\templates\frontend\course_lists\card_course.html:52
+#: frontend/templates/frontend/course_lists/card_course.html:52
 msgid "Contents"
 msgstr "Inhalte"
 
-#: .\templates\frontend\course_lists\course_cards_paginated.html:11
+#: frontend/templates/frontend/course_lists/course_cards_paginated.html:11
 msgid "No matching courses found"
 msgstr "Keine passenden Kurse gefunden"
 
-#: .\templates\frontend\course_lists\courses.html:33
+#: frontend/templates/frontend/course_lists/courses.html:33
 msgid "Add Course"
 msgstr "Kurs hinzufügen"
 
-#: .\templates\frontend\course_lists\courses_category.html:12
+#: frontend/templates/frontend/course_lists/courses_category.html:12
 msgid "Courses for Category"
 msgstr "Kurse für Kategorie"
 
-#: .\templates\frontend\course_lists\courses_category.html:18
-#: .\templates\frontend\course_lists\courses_period.html:18
-#: .\templates\frontend\navbar.html:12
+#: frontend/templates/frontend/course_lists/courses_category.html:18
+#: frontend/templates/frontend/course_lists/courses_period.html:18
+#: frontend/templates/frontend/navbar.html:12
 msgid "All Courses"
 msgstr "Alle Kurse"
 
-#: .\templates\frontend\course_lists\courses_category.html:18
+#: frontend/templates/frontend/course_lists/courses_category.html:18
 msgid "for Category"
 msgstr "für Kategorie"
 
-#: .\templates\frontend\course_lists\courses_period.html:12
+#: frontend/templates/frontend/course_lists/courses_period.html:12
 msgid "Courses for"
 msgstr "Kurse für"
 
-#: .\templates\frontend\course_lists\courses_period.html:18
+#: frontend/templates/frontend/course_lists/courses_period.html:18
 msgid "for"
 msgstr "für"
 
-#: .\templates\frontend\dashboard.html:9
+#: frontend/templates/frontend/dashboard.html:9
 msgid "Dashboard"
 msgstr "Dashboard"
 
-#: .\templates\frontend\dashboard.html:11
+#: frontend/templates/frontend/dashboard.html:11
 msgid "Your Courses"
 msgstr "Deine Kurse"
 
-#: .\templates\frontend\dashboard.html:21
+#: frontend/templates/frontend/dashboard.html:21
 msgid "Stared Courses"
 msgstr "Markierte Kurse"
 
-#: .\templates\frontend\dashboard.html:29
+#: frontend/templates/frontend/dashboard.html:29
 msgid "All Courses by Period"
-msgstr "Alle Kurse für den Zeitraum"
+msgstr "ALle Kurse für den Zeitraum"
 
-#: .\templates\frontend\dashboard.html:36
+#: frontend/templates/frontend/dashboard.html:36
 msgid "All Courses by Category"
 msgstr "Alle Kurse für die Kategorie"
 
-#: .\templates\frontend\index.html:27
+#: frontend/templates/frontend/index.html:27
 msgid "Login"
 msgstr "Login"
 
-#: .\templates\frontend\index.html:29
+#: frontend/templates/frontend/index.html:29
 msgid "Go to dashboard"
 msgstr "Zum Dashboard"
 
-#: .\templates\frontend\navbar.html:8 .\templates\frontend\search.html:11
+#: frontend/templates/frontend/navbar.html:8
+#: frontend/templates/frontend/search.html:11
 msgid "Search"
 msgstr "Suche"
 
-#: .\templates\frontend\navbar.html:14
+#: frontend/templates/frontend/navbar.html:14
 msgid "Admin Menu"
 msgstr "Admin-Menü"
 
-#: .\templates\frontend\navbar.html:24
-msgid "Language"
-msgstr "Sprache"
-
-#: .\templates\frontend\navbar.html:42
+#: frontend/templates/frontend/navbar.html:19
 msgid "Logout"
 msgstr "Logout"
 
-#: .\templates\frontend\profile\profile.html:12
-msgid "Edit"
-msgstr "Bearbeiten"
-
-#: .\templates\frontend\profile\profile.html:16
+#: frontend/templates/frontend/profile/profile.html:15
 msgid "User"
 msgstr "Benutzer*in"
 
-#: .\templates\frontend\profile\profile.html:18
+#: frontend/templates/frontend/profile/profile.html:18
 msgid "User profile picture"
 msgstr "Profilbild"
 
-#: .\templates\frontend\profile\profile.html:25
+#: frontend/templates/frontend/profile/profile.html:25
 msgid "Owned Courses"
 msgstr "Verantwortete Kurse"
 
-#: .\templates\frontend\profile\profile_edit.html:9
+#: frontend/templates/frontend/profile/profile_edit.html:9
 msgid "Edit your profile"
 msgstr "Profil bearbeiten"
 
-#: .\templates\frontend\profile\profile_edit.html:15
+#: frontend/templates/frontend/profile/profile_edit.html:15
 msgid "Reset"
 msgstr "Zurücksetzen"
 
-#: .\templates\frontend\profile\profile_edit.html:22
+#: frontend/templates/frontend/profile/profile_edit.html:22
 msgid "Submit"
 msgstr "Abschicken"
 
-#: .\templates\frontend\search.html:19
+#: frontend/templates/frontend/search.html:19
 msgid "Search Results for "
 msgstr "Suchergebnisse für "
 
-#: .\templates\frontend\search.html:30
+#: frontend/templates/frontend/search.html:30
 msgid "No courses found"
 msgstr "Keine Kurse gefunden"
 
-#: .\templates\frontend\search.html:45
+#: frontend/templates/frontend/search.html:45
 msgid "No topics found"
 msgstr "Keine Themen gefunden"
 
-#: .\views\comment.py:33 .\views\comment.py:107
+#: frontend/views/comment.py:33 frontend/views/comment.py:107
 msgid "You don't have permission to do this."
 msgstr "Keine Berechtigung, um das durchzuführen"
 
-#: .\views\comment.py:50
+#: frontend/views/comment.py:50
 msgid "Successfully deleted comment."
 msgstr "Kommentar erfolgreich gelöscht."
 
-#: .\views\comment.py:90
+#: frontend/views/comment.py:90
 msgid "Successfully edited Comment."
 msgstr "Kommentar erfolgreich bearbeitet."
 
-#: frontend/views/content.py:34
+#: frontend/views/content.py:29
 msgid "Content '{cleaned_data['type']}' successfully added"
 msgstr "Inhalt '{cleaned_data['type']}' erfolgreich hinzugefügt"
 
-#: frontend/views/content.py:41
+#: frontend/views/content.py:36 frontend/views/content.py:123
 msgid "An error occurred while processing the request"
 msgstr "Es trat ein Fehler beim Verarbeiten der Anfrage auf"
 
-#: frontend/views/content.py:178
+#: frontend/views/content.py:112
 msgid "You are not allowed to edit this content"
 msgstr "Du bist nicht berechtigt, diesen Inhalt zu bearbeiten"
 
-#: frontend/views/course.py:48
+#: frontend/views/course.py:27
 msgid ""
 "Course '{cleaned_data['title']}' successfully created. All settings and "
 "contents of the course '{original_course.title}' were copied."
@@ -347,15 +320,15 @@ msgstr ""
 "Kurs '{cleaned_data['title']}' erfolgreich erstellt. Alle Einstellungen und "
 "Inhalte des Kurses '{original_course.title}' wurden kopiert."
 
-#: .\views\course.py:62
+#: frontend/views/course.py:62
 msgid "Course '{cleaned_data['title']}' successfully created"
 msgstr "Kurs '{cleaned_data['title']}' erfolgreich angelegt"
 
-#: .\views\course.py:88
+#: frontend/views/course.py:88
 msgid "Course '{cleaned_data['title']}' successfully edited"
 msgstr "Kurs '{cleaned_data['title']}' erfolgreich bearbeitet"
 
-#: .\views\profile.py:25
+#: frontend/views/profile.py:25
 msgid "Profile updated"
 msgstr "Profil aktualisiert"
 
