@@ -263,7 +263,6 @@ class AddTopicView(SuccessMessageMixin, LoginRequiredMixin, CreateView):
         if form.is_valid():
             topic = form.save(commit=False)
             topic.save()
-            course_id = self.kwargs['pk']
             return HttpResponse('<script type="text/javascript">window.close(); window.opener.parent.location.reload(true);</script>')
 
         else:
