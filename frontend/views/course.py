@@ -17,6 +17,11 @@ from base.models import Course, CourseStructureEntry
 from base.utils import check_owner_permission
 
 from frontend.forms import AddAndEditCourseForm, FilterAndSortForm
+from frontend.forms.course import TopicChooseForm
+
+import json
+from .json_handler import JsonHandler
+from django.shortcuts import render
 
 
 class DuplicateCourseView(SuccessMessageMixin, LoginRequiredMixin, CreateView):
@@ -181,6 +186,53 @@ class EditCourseView(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
         rtype: __proxy__
         """
         return _(f"Course '{cleaned_data['title']}' successfully edited")
+
+
+
+#TODO <Iteration 4>
+def edit_course_structure(request, pk):
+    """
+    For editing the Course structure. It is displayed in a drag and droppable view.
+    :param HttpRequest request: The given request
+    :param int pk: the id of the course whose structure should be edited
+    :return: It renders the response if there is no post, if there was it redirects
+    to the course view
+    :rtype: HttpResponse
+    """
+    course = Course.objects.get(pk=pk)
+
+    # Topics
+    # create_structure_from_form(request, add_topic_formset, created_course)
+    pkList = []
+    for owner in course.owners.all():
+        pkList.append(owner.pk)
+
+    if get_user(request).pk not in pkList:
+        messages.error(request, "You don't have permission to do this.",
+                       extra_tags="alert-danger")
+        return HttpResponseRedirect(reverse('frontend:course', args=(pk,)))
+
+    if request.method == 'POST':
+        print(request.POST)
+        json_topic_list = request.POST.get('topic_list')
+
+        data = json.loads(json_topic_list)
+        CourseStructureEntry.objects.filter(course=course).delete()
+        JsonHandler.create_structures_from_json_data(course, data)
+
+        return HttpResponseRedirect(reverse('frontend:course', args=(course.id,)))
+
+    if request.GET.get('duplicate'):
+        duplicate_course = Course.objects.get(pk=request.GET.get('duplicate'))
+        json_response = JsonHandler.create_json_topics_structure(duplicate_course)
+    else:
+        json_response = JsonHandler.create_json_topics_structure(course)
+
+    course = Course.objects.get(pk=pk)
+    return render(request, 'frontend/course/edit_course_structure.html',
+                  {'course': course, 'form': TopicChooseForm,
+                   'existing_structure': json.dumps(json_response)})
+
 
 
 # pylint: disable=too-many-ancestors

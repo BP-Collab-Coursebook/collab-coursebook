@@ -179,6 +179,15 @@ class Course(models.Model):
         verbose_name_plural = _("Courses")
         ordering = ['title']
 
+    #TODO <Iteration 4>
+    def get_sorted_topic_list(self):
+        """
+        Sorts the topics
+        :return: the sorted topiclist
+        :rtype: QuerySet
+        """
+        return self.topics.order_by('child_topic__index')
+
     def __str__(self):
         """String representation
 
@@ -506,7 +515,7 @@ class CourseStructureEntry(models.Model):
                                on_delete=models.CASCADE)
     index = models.CharField(verbose_name=_("Index"),
                              max_length=50)
-    topic = models.ForeignKey(Topic, verbose_name=_("Topic"),
+    topic = models.ForeignKey(Topic, related_name='child_topic', verbose_name=_("Topic"),
                               on_delete=models.DO_NOTHING)
 
     class Meta:

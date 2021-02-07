@@ -5,7 +5,8 @@ This file contains forms associated with the course.
 
 from django import forms
 
-from base.models import Course
+from base.models import Course, Topic
+from content.widgets import ModifiedClearableFileInput
 
 
 class AddAndEditCourseForm(forms.ModelForm):
@@ -31,11 +32,26 @@ class AddAndEditCourseForm(forms.ModelForm):
         model = Course
         fields = ['title', 'description', 'image', 'owners',
                   'restrict_changes', 'category', 'period']
+        widgets = {
+            'image': ModifiedClearableFileInput(attrs={'required': 'true'})
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Use better multiple select input for owners
         self.fields["owners"].widget.attrs = {'class': 'chosen-select'}
+
+
+
+#TODO <Iteration 4>
+class TopicChooseForm(forms.Form):
+    """
+    Form for choosing an existing topic
+    """
+    topic_name = forms.ModelChoiceField(required=False, queryset=Topic.objects.all(), label='')
+
+
+
 
 
 class FilterAndSortForm(forms.Form):

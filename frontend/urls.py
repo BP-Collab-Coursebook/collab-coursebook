@@ -9,6 +9,7 @@ from content.models import CONTENT_TYPES
 from export.views import generate_coursebook_response
 from frontend import views
 from frontend.views.coursebook import add_to_coursebook
+from frontend.views.course import edit_course_structure
 from frontend.views.search import SearchView
 
 app_name = "frontend"
@@ -53,6 +54,9 @@ urlpatterns = [
             path('coursebook/',
                  generate_coursebook_response,
                  name='coursebook-generate'),
+            path('edit_course_structure/',
+                 edit_course_structure,
+                 name='edit_course_structure')
         ])),
         path('<int:course_id>/topic/<int:topic_id>/content/', include([
 
