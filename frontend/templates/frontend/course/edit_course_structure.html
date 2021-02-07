@@ -36,7 +36,7 @@
             {% csrf_token %}
             {{ form }}
             {{ form.media }}
-            <a href="{% url 'frontend:add_topic' course.id %}" class="btn btn-secondary">{% fa5_icon 'plus' 'fas' %} Add Topic</a>
+            <a href="{% url 'frontend:add_topic' course.id %}" onclick="window.open(this.href,'targetWindow','toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=800,height=400'); return false" class="btn btn-secondary">{% fa5_icon 'plus' 'fas' %} Add Topic</a>
         </div>
     </div>
 

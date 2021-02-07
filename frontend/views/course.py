@@ -7,7 +7,7 @@ from django.contrib.auth import get_user
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse_lazy, reverse
 from django.views.generic import DetailView
 from django.views.generic.edit import FormMixin, CreateView, DeleteView, UpdateView
@@ -264,8 +264,8 @@ class AddTopicView(SuccessMessageMixin, LoginRequiredMixin, CreateView):
             topic = form.save(commit=False)
             topic.save()
             course_id = self.kwargs['pk']
-            return HttpResponseRedirect(reverse_lazy('frontend:edit_course_structure',
-                                                     args=(course_id,)))
+            return HttpResponse('<script type="text/javascript">window.close(); window.opener.parent.location.reload(true);</script>')
+
         else:
             return self.form_invalid(form)
 
