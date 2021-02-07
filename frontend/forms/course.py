@@ -33,7 +33,7 @@ class AddAndEditCourseForm(forms.ModelForm):
         fields = ['title', 'description', 'image', 'owners',
                   'restrict_changes', 'category', 'period']
         widgets = {
-            'image': ModifiedClearableFileInput(attrs={'required': 'true'})
+            'image': ModifiedClearableFileInput(attrs={'required': 'false'})
         }
 
     def __init__(self, *args, **kwargs):
