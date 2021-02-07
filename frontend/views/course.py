@@ -13,11 +13,11 @@ from django.views.generic import DetailView
 from django.views.generic.edit import FormMixin, CreateView, DeleteView, UpdateView
 from django.utils.translation import gettext_lazy as _
 
-from base.models import Course, CourseStructureEntry
+from base.models import Course, CourseStructureEntry, Topic
 from base.utils import check_owner_permission
 
 from frontend.forms import AddAndEditCourseForm, FilterAndSortForm
-from frontend.forms.course import TopicChooseForm
+from frontend.forms.course import TopicChooseForm, AddTopicForm
 
 import json
 from .json_handler import JsonHandler
@@ -232,6 +232,43 @@ def edit_course_structure(request, pk):
     return render(request, 'frontend/course/edit_course_structure.html',
                   {'course': course, 'form': TopicChooseForm,
                    'existing_structure': json.dumps(json_response)})
+
+
+#TODO <Iteration 4>
+class AddTopicView(SuccessMessageMixin, LoginRequiredMixin, CreateView):
+    """
+    #TODO
+    """
+    model = Topic
+    template_name = 'frontend/course/add_topic.html'
+    form_class = AddTopicForm
+
+    def get_success_message(self, cleaned_data):
+        """Success message
+
+        Returns the success message after the addition of a new topic was successful.
+
+        :param cleaned_data: The cleaned data
+        :type cleaned_data: dict
+
+        :return: the success message
+        :rtype: __proxy__
+        """
+        return _(f"Topic '{cleaned_data['title']}' successfully created")
+
+
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+
+        if form.is_valid():
+            topic = form.save(commit=False)
+            topic.save()
+            course_id = self.kwargs['pk']
+            return HttpResponseRedirect(reverse_lazy('frontend:edit_course_structure',
+                                                     args=(course_id,)))
+        else:
+            return self.form_invalid(form)
+
 
 
 

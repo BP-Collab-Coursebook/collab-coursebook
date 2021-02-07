@@ -56,7 +56,10 @@ urlpatterns = [
                  name='coursebook-generate'),
             path('edit_course_structure/',
                  edit_course_structure,
-                 name='edit_course_structure')
+                 name='edit_course_structure'),
+            path('add_topic/',
+                 views.AddTopicView.as_view(),
+                 name='add_topic')
         ])),
         path('<int:course_id>/topic/<int:topic_id>/content/', include([
 

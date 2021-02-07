@@ -1,0 +1,28 @@
+{% extends 'frontend/base_logged_in.html' %}
+
+{# Load the tag library #}
+{% load bootstrap4 %}
+{% load cc_frontend_tags %}
+{% load fontawesome_5 %}
+{% load static %}
+{% load i18n %}
+
+<!-- #TODO <Iteration 4> -->
+
+{% block imports %}
+    <link href="{% static 'css/content_detail.css' %}" type="text/css" rel="stylesheet"/>
+{% endblock %}
+
+{% block content %}
+    <form method="post" class="post-form" enctype=multipart/form-data>
+        {% csrf_token %}
+        {% bootstrap_form form %}
+
+        {{ form.media }}
+        <div>
+            <button type="submit"
+                    class="btn btn-primary float-right">{% fa5_icon 'plus-circle' 'fas' %} {% trans "Create" %}</button>
+        </div>
+    </form>
+
+{% endblock %}

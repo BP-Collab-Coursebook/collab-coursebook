@@ -51,6 +51,18 @@ class TopicChooseForm(forms.Form):
     topic_name = forms.ModelChoiceField(required=False, queryset=Topic.objects.all(), label='')
 
 
+#TODO <Iteration 4>
+class AddTopicForm(forms.ModelForm):
+    """
+    #TODO
+    """
+    class Meta:
+        """Meta options
+        #TODO
+        """
+        model = Topic
+        fields = ['title', 'category']
+
 
 
 
