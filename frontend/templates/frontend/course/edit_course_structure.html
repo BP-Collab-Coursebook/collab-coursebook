@@ -36,7 +36,7 @@
             {% csrf_token %}
             {{ form }}
             {{ form.media }}
-            <a href="{% url 'frontend:add_topic' course.id %}" class="btn btn-secondary">{% fa5_icon 'times' 'fas' %}Add Topic</a>
+            <a href="{% url 'frontend:add_topic' course.id %}" class="btn btn-secondary">{% fa5_icon 'plus' 'fas' %} Add Topic</a>
         </div>
     </div>
 
