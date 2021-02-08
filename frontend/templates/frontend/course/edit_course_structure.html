@@ -62,7 +62,7 @@
         </div>
     </div>
     <br>
-    <button onclick="location.href='{% url 'frontend:course' course.id %}" class=" btn btn-primary">
+    <button onclick="location.href='{% url 'frontend:course' course.id %}'" class=" btn btn-primary">
         {% fa5_icon 'chevron-circle-left' 'fas' %} Back
     </button>
     <button type="submit" class="btn btn-primary">
@@ -123,7 +123,7 @@
                 html += "<div class='dd-handle dd3-handle'>Drag</div>";
                 html += "\n";
                 // Remove option
-                html += "<a href='#' class='close close-assoc-file data-dismiss='alert' aria-label='close'>&times;</a>"
+                html += "<a href='#' class='close close-assoc-file' data-dismiss='alert' aria-label='close'>&times;</a>"
                 html += "\n";
                 html += "<div class='dd3-content'>" + item.value + "</div>";
 
