@@ -13,7 +13,9 @@
 <!-- #TODO <Iteration 4> -->
 
 {% block imports %}
-    <script type="text/javascript" src="{% static 'Nestable2/jquery.nestable.js' %}"></script>
+    <script type="text/javascript" src="{% static 'nestable2/jquery.nestable.js' %}"></script>
+    <script type="text/javascript" src="{% static 'nestable2/dist/jquery.nestable.min.js' %}"></script>
+    <link href="{% static 'nestable2/dist/jquery.nestable.min.css' %}" type="text/css" rel="stylesheet"/>
     <link href="{% static 'css/edit_structure.css' %}" type="text/css" rel="stylesheet"/>
 {% endblock %}
 
@@ -39,9 +41,12 @@
            class="btn btn-primary">
             {% fa5_icon 'plus' 'fas' %} Create Topic
         </a>
+        <button type="button" data-action="save" class="btn btn-primary">
+            {% fa5_icon 'save' %} {% trans "Save" %}
+        </button>
     </menu>
 
-    <!-- Topc combobox -->
+    <!-- Topic combobox -->
     {% csrf_token %}
     {{ form }}
 
@@ -49,32 +54,78 @@
     <!-- Structure Editor -->
     <div class="container-fluid">
         <div class="row">
-            <div class="cf nestable-lists enumeration">
-                <!-- Nestable listing -->
-                <div class="dd" id="nestable">
-                    <ol class="dd-list" id="dd-list-app-categories-container">
-                        <div id="dd-empty-placeholder"></div>
+            <!-- Nestable listing -->
+            <div class="cf nestable-lists">
+                <div class="dd" id="nestable3">
+                    <ol class="dd-list" id="dd-empty-placeholder">
+                        <!-- Insert elements here -->
                     </ol>
                 </div>
             </div>
         </div>
     </div>
-
     <script>
+
         $(document).ready(function () {
+
             // Convert JSON containing topics to String
             const obj = JSON.stringify({{ existing_structure|safe }});
+            // Output html
             let output = '';
 
+            // Stores newly created topics
+            const topics = []
+
+            // Parse json, dynamically generate a nestable list
+            $.each(JSON.parse(obj), function (index, item) {
+                output += buildItem(item);
+            });
+
+            // Add to list
+            $('#dd-empty-placeholder').html(output);
+
+            // Activate nestable
+            $('#nestable3').nestable();
+
+            $("#dd-empty-placeholder .close").on("click", removeItem);
+
+            // Define actions on buttons of the nestable menu
+            $('#nestable-menu').on('click', function (event) {
+                const target = $(event.target);
+                const action = target.data('action');
+
+                switch (action) {
+                    case 'expand-all':
+                        $('#nestable3').nestable('expandAll');
+                        break;
+                    case 'collapse-all':
+                        $('#nestable3').nestable('collapseAll');
+                        break;
+                    case 'save':
+                        console.log($('#nestable3').nestable('serialize'));
+                        break;
+                    default:
+                        break;
+                }
+            });
+
             /**
-             * Generates the menu list item for the item (topic)
+             * Generates the menu list item for the item (topic).
              * @param item item to be added to the list
              * @returns {string} html list item
              */
             function buildItem(item) {
-                let html = "<li class='dd-item' data-id='" + item.id + "'>";
-                html += "<div class='dd-handle'>" + item.value + "</div>";
-                console.log(item)
+                // HTML code
+                let html = "<li class='dd-item dd3-item' data-id='" + item.id + "'>";
+                html += "\n";
+                // Drag option
+                html += "<div class='dd-handle dd3-handle'>Drag</div>";
+                html += "\n";
+                // Remove option
+                html += "<a href='#' class='close close-assoc-file data-dismiss='alert' aria-label='close'>&times;</a>"
+                html += "\n";
+                html += "<div class='dd3-content'>" + item.value + "</div>";
+
                 // Sub topics
                 if (item.children) {
                     html += "<ol class='dd-list'>";
@@ -87,69 +138,30 @@
                 return html;
             }
 
-            // Parse json
-            $.each(JSON.parse(obj), function (index, item) {
+            /**
+             * Appends the new value to the last of the nestable list.
+             * @param value the given value to append
+             */
+            function addItem(value, category) {
+                const id = 'new_id' + topics.length;
+                const item = {value: value, id: id, category: category}
+                topics[id] = item;
                 output += buildItem(item);
-            });
-
-            // Add to list
-            $('#dd-empty-placeholder').html(output);
-            $('#nestable3').nestable();
-        });
-
-        $('.dd').nestable({
-            /**
-             * The callback provided as an option is fired when elements are reordered or nested.
-             * @param l main container
-             * @param e element that was moved
-             */
-            callback: function (l, e) {
-
-            },
-
-            /**
-             * The callback provided as an option is fired when user starts to drag an element.
-             * Returning false from this callback will disable the dragging.
-             * @param l main container
-             * @param e element that was moved
-             */
-            onDragStart: function (l, e) {
-                // Get type of dragged element
-                const type = $(e).data('type');
-
-                // Based on type of dragged element add or remove no children class
-                switch (type) {
-                    case 'type1':
-                        // Element of type1 can be child of type2 and type3
-                        l.find("[data-type=type2]").removeClass('dd-nochildren');
-                        l.find("[data-type=type3]").removeClass('dd-nochildren');
-                        break;
-                    case 'type2':
-                        // Element of type2 cannot be child of type2 or type3
-                        l.find("[data-type=type2]").addClass('dd-nochildren');
-                        l.find("[data-type=type3]").addClass('dd-nochildren');
-                        break;
-                    case 'type3':
-                        // Element of type3 cannot be child of type2 but can be child of type3
-                        l.find("[data-type=type2]").addClass('dd-nochildren');
-                        l.find("[data-type=type3]").removeClass('dd-nochildren');
-                        break;
-                    default:
-                        console.error("Invalid type");
-                }
-            },
-
-            /**
-             * The callback provided as an option is fired when user drop an element and before 'callback' method fired.
-             * Returning false from this callback will disable the dropping and restore element at start position.
-             * @param l the main container
-             * @param e the element that was moved
-             * @param p the place where element was moved
-             */
-            beforeDragStop: function (l, e, p) {
+                $('#dd-empty-placeholder').html(output);
 
             }
+
+            /**
+             * Removes the clicked item for the nestable list.
+             * @param event event
+             */
+            function removeItem(event) {
+                $(this).closest('li').remove();
+                console.log($('#nestable3').nestable('serialize'));
+            }
         });
+
     </script>
+
 
 {% endblock %}

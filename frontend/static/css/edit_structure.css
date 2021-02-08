@@ -119,8 +119,8 @@ p {
 }
 
 /**
-     * Nestable Draggable Handles
-     */
+  * Nestable Draggable Handles
+  */
 
 .dd3-content {
     display: block;
@@ -189,18 +189,4 @@ p {
 
 .dd3-handle:hover {
     background: #ddd;
-}
-
-.enumeration ol {
-    counter-reset: item;
-    list-style-type: none;
-}
-
-.enumeration li div {
-    display: inline;
-}
-
-.enumeration li:before {
-    content: counters(item, ".") ".";
-    counter-increment: item;
 }
