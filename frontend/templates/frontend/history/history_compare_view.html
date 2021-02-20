@@ -1,0 +1,114 @@
+{# Load the tag library #}
+{% load i18n %}
+{% load fontawesome_5 %}
+
+{% if request.GET.version_id1 %}
+    <p class="help">
+        {% blocktrans with date1=version1.revision.date_created|date:_("DATETIME_FORMAT") date2=version2.revision.date_created|date:_("DATETIME_FORMAT") %}
+            Compare Version 1: <strong>{{ date1 }}</strong> with Version 2: <strong>{{ date2 }}</strong>:
+        {% endblocktrans %}
+    </p>
+
+    <!-- Show fields differences -->
+        {% for field_diff in compare_data %}
+            <h3>
+                {% firstof field_diff.field.verbose_name field_diff.field.related_name %}
+            </h3>
+            {% if field_diff.field.help_text %}
+                <p class="help">
+                    {{ field_diff.field.help_text }}
+                </p>
+            {% endif %}
+            <div class="module">
+                {{ field_diff.diff }}
+            </div>
+        {% empty %}
+            <div class="module">
+                <p>
+                    <strong>
+                        {% trans "There are no differences." %}
+                    </strong>
+                </p>
+            </div>
+        {% endfor %}
+
+    <!-- Show comment -->
+    <h4>
+        {% trans "Change log:" %}
+    </h4>
+    <blockquote>
+        {{ version2.revision.comment|default:_("(no comment exists)") }}
+    </blockquote>
+
+
+    <!-- Buttons for previous and next compare -->
+    {% if prev_url %}
+        <button onclick="location.href='{{ prev_url }}'" class="btn btn-primary add-item">
+            {% fa5_icon 'chevron-circle-left' 'fas' %} {% trans "previous" %}
+        </button>
+    {% endif %}
+
+    {% if next_url %}
+        <button onclick="location.href='{{ next_url }}'" class="btn btn-primary add-item">
+            {% fa5_icon 'chevron-circle-right' 'fas' %} {% trans "next" %}
+        </button>
+    {% endif %}
+
+    <!-- Buttons for revert -->
+    <button type="button" class="btn btn-warning" data-toggle="modal"
+            data-target="#revertCourseModal">
+        {% fa5_icon 'undo' 'fas' %} {% trans "Revert to Version 1" %}
+    </button>
+
+    <!-- modal for course/content revert -->
+    <div class="modal fade" id="revertCourseModal" tabindex="1" role="dialog" aria-labelledby="revertCourseModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="revertCourseModalLabel">{% trans "Reversion of" %} <i>{{ version1.content_type.name }}</i>?</h5>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        {% blocktrans with date1=version1.revision.date_created|date:_("DATETIME_FORMAT") type=version1.content_type.name %}
+                            Are you sure you want to revert this {{ type }} to Version <strong>{{ date1 }}</strong>? You can also undo the revert
+                            later.
+                        {% endblocktrans %}
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    {% if version1.content_type.name == 'Course' %}
+                    <form action="{% url 'frontend:course-revert' version1.object_id version1.pk %}" method="post"
+                          class="mb-0">
+                        {% csrf_token %}
+                        <button class="btn btn-secondary" data-dismiss="modal">
+                            {% fa5_icon 'times' 'fas' %} {% trans "Cancel" %}
+                        </button>
+                        <button
+                                type="submit" class="btn btn-warning"> {% fa5_icon 'trash' 'fas' %} {% trans "Confirm" %}
+                        </button>
+                    </form>
+                    {% endif %}
+                    {% if 'Content' in version1.content_type.name %}
+                    <form action="{% url 'frontend:content-revert' save_list.0 save_list.1 save_list.2 version1.pk %}" method="post"
+                          class="mb-0">
+                        {% csrf_token %}
+                        <button class="btn btn-secondary" data-dismiss="modal">
+                            {% fa5_icon 'times' 'fas' %} {% trans "Cancel" %}
+                        </button>
+                        <button
+                                type="submit" class="btn btn-warning"> {% fa5_icon 'trash' 'fas' %} {% trans "Confirm" %}
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <br><br>
+
+    <button onclick="location.href='{{ history_url }}'" class="btn btn-primary add-item">
+        {% fa5_icon 'chevron-circle-left' 'fas' %} {% trans "Go back to history list" %}
+    </button>
+{% endif %}
