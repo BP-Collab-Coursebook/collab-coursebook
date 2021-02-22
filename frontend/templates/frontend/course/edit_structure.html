@@ -88,6 +88,7 @@
     <button onclick="save()" type="submit" class="btn btn-primary">
         {% fa5_icon 'save' %} {% trans 'Save' %}
     </button>
+
     <script>
         // Convert JSON containing topics to String
         const json_obj = JSON.stringify({{ structure|safe }});

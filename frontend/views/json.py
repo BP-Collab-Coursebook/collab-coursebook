@@ -4,6 +4,7 @@ This file describes the json handling on resources needed for frontend views.
 """
 
 from django.core.exceptions import ValidationError
+
 from base.models import CourseStructureEntry, Topic
 
 

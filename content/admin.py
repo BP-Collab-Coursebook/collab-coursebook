@@ -15,7 +15,6 @@ from content.models import PDFContent, SingleImageAttachment, TextField
 from content.models import YTVideoContent
 
 
-# pylint: disable=too-many-ancestors
 @admin.register(ImageAttachment)
 class ImageAttachmentAdmin(CompareVersionAdmin):  # pylint: disable=too-many-ancestors
     """Image attachment admin
@@ -24,7 +23,6 @@ class ImageAttachmentAdmin(CompareVersionAdmin):  # pylint: disable=too-many-anc
     """
 
 
-# pylint: disable=too-many-ancestors
 @admin.register(ImageContent)
 class ImageContentAdmin(CompareVersionAdmin):  # pylint: disable=too-many-ancestors
     """Image content admin
@@ -33,7 +31,6 @@ class ImageContentAdmin(CompareVersionAdmin):  # pylint: disable=too-many-ancest
     """
 
 
-# pylint: disable=too-many-ancestors
 @admin.register(Latex)
 class LatexAdmin(CompareVersionAdmin):  # pylint: disable=too-many-ancestors
     """LaTeX admin
@@ -46,7 +43,6 @@ class LatexAdmin(CompareVersionAdmin):  # pylint: disable=too-many-ancestors
     fields = ['content', 'textfield', 'source']
 
 
-# pylint: disable=too-many-ancestors
 @admin.register(PDFContent)
 class PDFContentAdmin(CompareVersionAdmin):  # pylint: disable=too-many-ancestors
     """PDF content admin
@@ -55,7 +51,6 @@ class PDFContentAdmin(CompareVersionAdmin):  # pylint: disable=too-many-ancestor
     """
 
 
-# pylint: disable=too-many-ancestors
 @admin.register(SingleImageAttachment)
 class SingleImageAttachmentAdmin(admin.ModelAdmin):  # pylint: disable=too-many-ancestors
     """Singe Image attachment admin
@@ -64,7 +59,6 @@ class SingleImageAttachmentAdmin(admin.ModelAdmin):  # pylint: disable=too-many-
     """
 
 
-# pylint: disable=too-many-ancestors
 @admin.register(TextField)
 class TextFieldAdmin(CompareVersionAdmin):  # pylint: disable=too-many-ancestors
     """Text field admin
@@ -73,7 +67,6 @@ class TextFieldAdmin(CompareVersionAdmin):  # pylint: disable=too-many-ancestors
     """
 
 
-# pylint: disable=too-many-ancestors
 @admin.register(YTVideoContent)
 class YTVideoContentAdmin(CompareVersionAdmin):  # pylint: disable=too-many-ancestors
     """YouTube video content
