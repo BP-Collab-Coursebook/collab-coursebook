@@ -4,7 +4,7 @@ This file contains forms associated with the content.
 """
 
 from django import forms
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext_lazy as _
 
 from base.models import Content
 
@@ -15,7 +15,6 @@ class AddContentForm(forms.ModelForm):
     This model represents the add form for new content to a topic.
     """
 
-    # pylint: disable=too-few-public-methods
     class Meta:
         """Meta options
 
@@ -52,12 +51,11 @@ class EditContentForm(forms.ModelForm):
         required=True,
         widget=forms.Textarea(
             attrs={'style': 'height: 35px'}),
-        label=_('Change log')
+        label=_('Change Log')
     )
     field_order = ['change_log', 'description', 'language', 'tags',
                    'readonly', 'public']
 
-    # pylint: disable=too-few-public-methods
     class Meta:
         """Meta options
 

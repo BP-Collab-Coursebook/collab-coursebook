@@ -46,7 +46,7 @@ class Profile(models.Model):
     def __str__(self):
         """String representation
 
-        Returns he string representation of this object.
+        Returns the string representation of this object.
 
         :return: the string representation of this object
         :rtype: str
@@ -67,7 +67,7 @@ def create_user_profile(sender, instance, created, **kwargs):
     :param created: True if the profile was created
     :type created: bool
     :param kwargs: The keyword arguments
-    :type kwargs: ANY
+    :type kwargs: Any
     """
     if created:
         Profile.objects.create(user=instance)
@@ -84,7 +84,7 @@ def save_user_profile(sender, instance, **kwargs):
     :param instance: The user instance to be saved
     :type instance: User
     :param kwargs: The keyword arguments
-    :type kwargs: ANY
+    :type kwargs: Any
     """
     profile = Profile.objects.get(user=instance)
     profile.save()

@@ -10,7 +10,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
 from django.core.exceptions import ValidationError
-from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy, reverse
 from django.views.generic import DetailView
@@ -23,7 +23,7 @@ from base.utils import check_owner_permission
 from frontend.forms import AddCourseForm, EditCourseForm, FilterAndSortForm
 from frontend.forms.course import TopicChooseForm, CreateTopicForm
 
-from frontend.views.history import update_comment
+from frontend.views.history import Reversion
 from frontend.views.json import JsonHandler
 
 
@@ -73,10 +73,10 @@ class DuplicateCourseView(SuccessMessageMixin, LoginRequiredMixin, CreateView):
         """
         course_to_duplicate = Course.objects.get(pk=self.get_object().id)
         data = course_to_duplicate.__dict__
-        # set data not included in the dict
+        # Set data not included in the dict
         data['owners'] = get_user(self.request)
         data['image'] = course_to_duplicate.image
-        # this data has the wrong key
+        # This data has the wrong key
         data['category'] = course_to_duplicate.category
         data['period'] = course_to_duplicate.period
         return data
@@ -95,7 +95,7 @@ class DuplicateCourseView(SuccessMessageMixin, LoginRequiredMixin, CreateView):
         duplicated_course = form.save()
         original_course = Course.objects.get(pk=self.get_object().id)
         course_structure_entries = CourseStructureEntry.objects.filter(course=original_course)
-        # duplicate course structure entries
+        # Duplicates the course structure entries
         for entry in course_structure_entries:
             entry.pk = None
             entry.course = duplicated_course
@@ -103,7 +103,6 @@ class DuplicateCourseView(SuccessMessageMixin, LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-# pylint: disable=too-many-ancestors
 class AddCourseView(SuccessMessageMixin, LoginRequiredMixin, CreateView):
     """Add course view
 
@@ -208,7 +207,7 @@ class EditCourseView(SuccessMessageMixin, LoginRequiredMixin, UpdateView):
         :rtype: TemplateResponse
         """
         # Reversion comment
-        update_comment(request)
+        Reversion.update_comment(request)
         return super().post(request, *args, **kwargs)
 
 
@@ -248,7 +247,7 @@ class EditCourseStructureView(DetailView, FormMixin):
         context['topics'] = TopicChooseForm
         return context
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):  # pylint: disable=unused-argument
         """Post
 
         Defines what happens after form is posted. Sets object and the checks if form is valid.
@@ -261,9 +260,11 @@ class EditCourseStructureView(DetailView, FormMixin):
         :type kwargs: dict
 
         :return: the json data if there request is an ajax, else an bad http response
-        :rtype: HttpResponse or JsonResponse
+        :rtype:  JsonResponse
         """
-        if request.is_ajax():
+        form_create_topic = self.get_form()
+        if form_create_topic.is_valid():
+            # AJAX request
             title = request.POST['title']
             category_id = request.POST['category']
             new_topic = Topic.objects.create(title=title, category_id=category_id)
@@ -275,10 +276,9 @@ class EditCourseStructureView(DetailView, FormMixin):
                 sorted_topics.append({'id': topic.id, 'title': topic.__str__()})
             data = {'topic_id': new_topic.id, 'topics': sorted_topics}
             return JsonResponse(data=data)
-        return HttpResponse(status=400)
+        return self.form_invalid(form_create_topic)
 
 
-# pylint: disable=too-many-ancestors
 class CourseView(DetailView, FormMixin):
     """Course list view
 
@@ -309,7 +309,17 @@ class CourseView(DetailView, FormMixin):
         self.filtered_by = 'None'
         super().__init__()
 
-    def post(self, request, *args, **kwargs):
+    def get_success_url(self):
+        """Success url
+
+        Returns the url to return to after successful deletion.
+
+        :return: the success url
+        :rtype: __proxy__
+        """
+        return reverse_lazy('frontend:dashboard')
+
+    def post(self, request, *args, **kwargs):  # pylint: disable=unused-argument
         """Post
 
         Defines what happens after form is posted. Sets object and the checks if form is valid.
@@ -322,14 +332,12 @@ class CourseView(DetailView, FormMixin):
         :type kwargs: dict[str, Any]
 
         :return: the result from form_valid / form_invalid depending on the result from is_valid
-        :rtype: TemplateResponse
+        :rtype: HttpResponse
         """
         self.object = self.get_object()
-        form = self.get_form()
-        check = True
-        # Edit course structure
+        # Edit course structure cancel/save
         if request.is_ajax():
-
+            check = True
             # Update course structure
             topic_list = request.POST.get('topic_list')
             if topic_list:
@@ -346,9 +354,9 @@ class CourseView(DetailView, FormMixin):
             if ids:
                 JsonHandler.clean_topics(ids)
 
-        if not form.is_valid() or not check:
-            return self.form_invalid(form)
-        return self.form_valid(form)
+        if not check:
+            return HttpResponseBadRequest()
+        return HttpResponse()
 
     def form_valid(self, form):
         """Form validation
@@ -437,7 +445,6 @@ class CourseView(DetailView, FormMixin):
         return context
 
 
-# pylint: disable=too-many-ancestors
 class CourseDeleteView(LoginRequiredMixin, DeleteView):
     """Course delete view
 
@@ -449,7 +456,7 @@ class CourseDeleteView(LoginRequiredMixin, DeleteView):
     :type CourseDeleteView.template_name: str
     """
     model = Course
-    template_name = 'frontend/course/delete_course_confirm.html'
+    template_name = 'frontend/course/delete_confirm.html'
 
     def get_success_url(self):
         """Success url
@@ -461,11 +468,10 @@ class CourseDeleteView(LoginRequiredMixin, DeleteView):
         """
         return reverse_lazy('frontend:dashboard')
 
-    # Check if the user is allowed to view the delete page
     def dispatch(self, request, *args, **kwargs):
         """Dispatch
 
-        Overwrites dispatch: Check if a user is allowed to visit the page.
+        Overwrites dispatch: Check if a user is allowed to view the deletepage.
 
         :param request: The given request
         :type request: HttpRequest
@@ -502,10 +508,13 @@ class CourseDeleteView(LoginRequiredMixin, DeleteView):
         return super().delete(self, request, *args, **kwargs)
 
 
-def add_remove_favourites(request, pk):
-    """
-    #TODO <Iteration 5>
-    :param request: the given request
+def add_remove_favourites(request, pk):  # pylint: disable=invalid-name
+    """Add and remove favourites
+
+    Add or removes the course from the favourites. If the course is already in the favourites
+    we remove it, else we add it.
+
+    :param request: The given request
     :type request: HTTPRequest
     :param pk: The course id
     :type pk: int
@@ -524,11 +533,11 @@ def add_remove_favourites(request, pk):
         message = _("Course %(title)s successfully removed from favourites") % {'title': course.title}
         messages.success(request, message, extra_tags="alert-success")
 
-    # otherwise add it to the favourite set
+    # Otherwise add it to the favourite set
     else:
         profile.stared_courses.add(course)
         message = _("Course %(title)s successfully added to favourites") % {'title': course.title}
         messages.success(request, message, extra_tags="alert-success")
 
-    # return to the course page afterwards
+    # Return to the course page afterwards
     return HttpResponseRedirect(reverse_lazy('frontend:course', args=(pk,)))

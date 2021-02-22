@@ -20,8 +20,7 @@ class AddCourseForm(forms.ModelForm):
     # Default value is -1: if this value gets overwritten the form
     # Edits the existing course with the title in the database
 
-    # pylint: disable=too-few-public-methods
-    class Meta:
+    class Meta:  # pylint: disable=too-few-public-methods
         """Meta options
 
         This class handles all possible meta options that you can give to this model.
@@ -62,13 +61,12 @@ class EditCourseForm(forms.ModelForm):
             attrs={'style': 'height: 35px'}),
         label=_('Change Log')
     )
-    field_order = ['change_log', 'title', 'description', 'image',
-                   'owners', 'restrict_changes', 'category', 'period']
+    field_order = ['title', 'description', 'image',
+                   'owners', 'restrict_changes', 'category', 'period', 'change_log']
 
     # Default value is -1: if this value gets overwritten the form
     # Edits the existing course with the title in the database
 
-    # pylint: disable=too-few-public-methods
     class Meta:
         """Meta options
 

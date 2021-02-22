@@ -11,11 +11,11 @@
 {% bootstrap_javascript jquery='full' %}
 
 {% block imports %}
-    <!-- Must be imported to use ajaxSetup and ajax, maybe store it locally? -->
+    <!-- TODO Must be imported to use ajaxSetup and ajax, maybe store it locally? -->
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-    <script type="text/javascript" src="{% static 'nestable2/jquery.nestable.js' %}"></script>
-    <script type="text/javascript" src="{% static 'nestable2/jquery.nestable.min.js' %}"></script>
-    <link href="{% static 'nestable2/jquery.nestable.min.css' %}" type="text/css" rel="stylesheet"/>
+    <script type="text/javascript" src="{% static 'vendor/Nestable2/jquery.nestable.js' %}"></script>
+    <script type="text/javascript" src="{% static 'vendor/Nestable2/jquery.nestable.min.js' %}"></script>
+    <link href="{% static 'vendor/Nestable2/jquery.nestable.min.css' %}" type="text/css" rel="stylesheet"/>
     <link href="{% static 'css/edit_structure.css' %}" type="text/css" rel="stylesheet"/>
 {% endblock %}
 
@@ -24,7 +24,6 @@
 {% endblock %}
 
 {% block content %}
-
     <div style="text-align: center">
         <h2 style="font-weight: bold">
             {% trans 'Edit Course Structure' %}
@@ -53,7 +52,8 @@
             <h4 style="font-weight: bold; text-align: center">
                 {% trans 'Add a new Topic' %}
             </h4>
-            <form method="post" id="post-form-topic" class="post-form" enctype=multipart/form-data>
+            <form method="post" id="post-form-edit-structure-create-topic" class="post-form"
+                  enctype=multipart/form-data>
                 {% csrf_token %}
                 {% bootstrap_form form %}
                 <button type="submit" class="btn btn-primary">
@@ -63,7 +63,8 @@
         </div>
     </div>
 
-    <br><br>
+    <br>
+    <br>
 
     <!-- Structure Editor -->
     <div class="container-fluid">
@@ -146,6 +147,10 @@
          * @param obj the json object to be parsed
          */
         function parseItems(obj) {
+            // Cannot parse an empty json object
+            if (obj === "[null]") {
+                return;
+            }
             // Parses json, dynamically generate a nestable list
             const placeholder = document.getElementById('dd-empty-placeholder');
             $.each(JSON.parse(obj), function (index, item) {
@@ -369,8 +374,7 @@
             // Defines actions on remove click
             $('#dd-empty-placeholder').on('click', '.close', removeItem);
 
-            $('#post-form-topic').on('submit', create)
+            $('#post-form-edit-structure-create-topic').on('submit', create)
         });
     </script>
-
 {% endblock %}

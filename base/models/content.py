@@ -383,9 +383,8 @@ class Content(models.Model):
                                    help_text=_("Can this content be updated?"),
                                    default=False)
     public = models.BooleanField(verbose_name=_("Show in public courses?"),
-                                 help_text=
-                                 _("May this content be displayed in courses "
-                                   "that don't require registration?"),
+                                 help_text=_("May this content be displayed in courses "
+                                             "that don't require registration?"),
                                  default=False)
 
     attachment = models.OneToOneField('content.ImageAttachment',
@@ -514,7 +513,6 @@ class Content(models.Model):
         Rating.objects.filter(user_id=user.user.id, content_id=self.id).delete()
         rating = Rating.objects.create(user=user, content=self, rating=rating)  # user = profile
         rating.save()
-        # pylint: disable=no-member
         self.save()
 
     def get_index_in_course(self, course):
