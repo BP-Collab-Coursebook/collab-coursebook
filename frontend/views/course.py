@@ -334,6 +334,17 @@ class CourseView(DetailView, FormMixin):
         :return: the result from form_valid / form_invalid depending on the result from is_valid
         :rtype: HttpResponse
         """
+        # Add/remove favourite
+        if request.POST.get('save') is not None:
+            # Identify the profile and the course
+            profile = get_user(request).profile
+            course = get_object_or_404(Course, pk=request.POST.get('course_pk'))
+            if request.POST.get('save') == 'true':
+                profile.stared_courses.add(course)
+            else:
+                profile.stared_courses.remove(course)
+            return HttpResponse()
+
         self.object = self.get_object()
         form = self.get_form()
         if form.is_valid():
@@ -513,38 +524,3 @@ class CourseDeleteView(LoginRequiredMixin, DeleteView):
         message = _("Course %(title)s successfully deleted") % {'title': self.get_object().title}
         messages.success(request, message, extra_tags="alert-success")
         return super().delete(self, request, *args, **kwargs)
-
-
-def add_remove_favourites(request, pk):  # pylint: disable=invalid-name
-    """Add and remove favourites
-
-    Add or removes the course from the favourites. If the course is already in the favourites
-    we remove it, else we add it.
-
-    :param request: The given request
-    :type request: HTTPRequest
-    :param pk: The course id
-    :type pk: int
-
-    :return: the redirection to the course page
-    :rtype: HttpResponse
-    """
-
-    # Identify the profile and the course
-    profile = get_user(request).profile
-    course = get_object_or_404(Course, pk=pk)
-
-    # If the course is already in the favourite set, remove it
-    if course in profile.stared_courses.all():
-        profile.stared_courses.remove(course)
-        message = _("Course %(title)s successfully removed from favourites") % {'title': course.title}
-        messages.success(request, message, extra_tags="alert-success")
-
-    # Otherwise add it to the favourite set
-    else:
-        profile.stared_courses.add(course)
-        message = _("Course %(title)s successfully added to favourites") % {'title': course.title}
-        messages.success(request, message, extra_tags="alert-success")
-
-    # Return to the course page afterwards
-    return HttpResponseRedirect(reverse_lazy('frontend:course', args=(pk,)))

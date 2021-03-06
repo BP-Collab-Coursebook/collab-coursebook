@@ -712,14 +712,6 @@ msgstr "Kurs %(title)s erfolgreich gelöscht"
 msgid "Course %(title)s successfully edited"
 msgstr "Kurs %(title)s erfolgreich bearbeitet"
 
-#: .\views\course.py:524
-msgid "Course %(title)s successfully removed from favourites"
-msgstr "Kurs %(title)s erfolgreich aus den Favoriten entfernt"
-
-#: .\views\course.py:530
-msgid "Course %(title)s successfully added to favourites"
-msgstr "Kurs %(title)s erfolgreich zu den Favoriten hinzugefügt"
-
 msgid "Course %(title1)s successfully created. All settings and "
  "contents of the course %(title)s were copied."
 msgstr "Kurs %(title1)s erfolgreich erstellt. Alle Einstellungen "

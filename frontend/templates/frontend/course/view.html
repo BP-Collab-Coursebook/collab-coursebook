@@ -15,6 +15,10 @@
 {% block imports %}
     {# CSS #}
     <link href="{% static 'css/view_course.css' %}" type="text/css" rel="stylesheet"/>
+
+    {# Load JavaScript #}
+    <script type="text/javascript" src="{% url 'frontend:javascript-catalog' %}"></script>
+    <script type="text/javascript" src="{% static 'js/request.js' %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -28,11 +32,24 @@
 
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
                 {% if user.is_authenticated %}
-                    <a class="dropdown-item"
-                       href="{% url 'frontend:favourite_course' pk=course.pk %}">
-                        {% if course in user.profile.stared_courses.all %}{% fa5_icon 'bookmark' 'fas' %}
-                            {% trans "Remove from favourite" %}
-                            {% else %}{% fa5_icon 'bookmark' 'far' %} {% trans "Add to favourite" %}{% endif %}</a>
+                    {# Add to favourite #}
+                    <button onclick="actionOnFavouriteClick()" id="add-fav" class="dropdown-item" style="display:
+                            {% if course not in user.profile.stared_courses.all %}
+                                none
+                            {% endif %}">
+                        {% fa5_icon 'bookmark' 'far' %} {% trans "Add to favourite" %}
+                    </button>
+                    {# Remove button #}
+                    <button onclick="actionOnFavouriteClick()" id="remove-fav" class="dropdown-item" style="display:
+                            {% if course in user.profile.stared_courses.all %}
+                                none
+                            {% else %}
+                                false
+                            {% endif %}">
+                        {% fa5_icon 'bookmark' 'fas' %}
+                        {% trans "Remove from favourite" %}
+                    </button>
+
                     {% if user.is_superuser or isCurrentUserOwner %}
                         <a href="{% url 'frontend:course-duplicate' pk=course.pk %}"
                            class="btn form-control btn-warning">{% fa5_icon "copy" "fas" %} {% trans "Duplicate Course" %}</a>
@@ -204,4 +221,35 @@
             </p>
         {% endfor %}
     </div>
-{% endblock %}s
+{% endblock %}
+
+{% block bottom_script %}
+    <script type="text/javascript">
+        function actionOnFavouriteClick() {
+            const add = document.getElementById("add-fav");
+            const remove = document.getElementById("remove-fav");
+            const save = add.style.display !== "none";
+            const course = "{{ course }}";
+            const pk = {{ course.pk }};
+
+            // Change visibility
+            add.style.display = add.style.display === "none" ? "" : "none";
+            remove.style.display = add.style.display === "none" ? "" : "none";
+
+            sendRequest({
+                url: "{% url 'frontend:course' course.id %}",
+                type: "POST",
+                data: {"save": save, "course_pk" : pk},
+
+                success: function (data) {
+                    const message = gettext("Course %s successfully " + (save ? "added to" : "removed from") + " the favourites.");
+                    showNotification(interpolate(message, [course]), "alert-info");
+                },
+                error: function (data) {
+                    const message = gettext("Error during data transfer to the server - status: %s");
+                    showNotification(interpolate(message, [data.status]), "alert-danger");
+                }
+            });
+        }
+    </script>
+{% endblock %}
