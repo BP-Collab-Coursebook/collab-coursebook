@@ -10,8 +10,6 @@ from base.models import Course, Topic
 
 from content.widgets import ModifiedClearableFileInput
 
-from frontend.forms.history import HistoryForm
-
 
 class AddCourseForm(forms.ModelForm):
     """Add course form
@@ -45,15 +43,24 @@ class AddCourseForm(forms.ModelForm):
         self.fields["owners"].widget.attrs = {'class': 'chosen-select'}
 
 
-class EditCourseForm(HistoryForm):
+class EditCourseForm(forms.ModelForm):
     """Edit course form
 
     This model represents the edit form for editing a course.
 
+    :attr EditCourseForm.change_log: The change log field which contains
+    a detailed message what was edited
+    :type EditCourseForm.change_log: CharField
     :attr EditCourseForm.fields: Including fields into the form
     :type EditCourseForm.fields: List[str]
     """
 
+    change_log = forms.CharField(
+        required=True,
+        widget=forms.Textarea(
+            attrs={'style': 'height: 35px'}),
+        label=_('Change Log')
+    )
     field_order = ['title', 'description', 'image',
                    'owners', 'restrict_changes', 'category', 'period', 'change_log']
 

@@ -4,10 +4,9 @@ This file contains forms associated with the content.
 """
 
 from django import forms
+from django.utils.translation import gettext_lazy as _
 
 from base.models import Content
-
-from frontend.forms.history import HistoryForm
 
 
 class AddContentForm(forms.ModelForm):
@@ -36,14 +35,24 @@ class AddContentForm(forms.ModelForm):
         }
 
 
-class EditContentForm(HistoryForm):
+class EditContentForm(forms.ModelForm):
     """Add content form
 
-    This model represents the edit form for changing content of a topic.
+    This model represents the add form for new content to a topic.
 
+    :attr EditContentForm.change_log: The change log field which contains
+    a detailed message what was edited
+    :type EditContentForm.change_log: CharField
     :attr EditContentForm.field_order: The order of the fields
     :type EditContentForm.field_order: list(str)
     """
+
+    change_log = forms.CharField(
+        required=True,
+        widget=forms.Textarea(
+            attrs={'style': 'height: 35px'}),
+        label=_('Change Log')
+    )
     field_order = ['change_log', 'description', 'language', 'tags',
                    'readonly', 'public']
 
