@@ -7,44 +7,29 @@ Secrets are stored in and imported from an additional file, not set under versio
 import collab_coursebook.settings_secrets as secrets
 
 # noinspection PyUnresolvedReferences
-# from collab_coursebook.settings import *
+from collab_coursebook.settings import *
 
 from django.utils.translation import gettext_lazy as _
 
 ### SECURITY ###
 
-DEBUG = False
-
-ALLOWED_HOSTS = secrets.HOSTS
-
-SECRET_KEY = secrets.SECRET_KEY
-
 SESSION_COOKIE_SECURE = False
 CSRF_COOKIE_SECURE = False
-
-
-### DATABASE ###
-
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'HOST': 'localhost',
-        'NAME': secrets.DB_NAME,
-        'USER': secrets.DB_USER,
-        'PASSWORD': secrets.DB_PASSWORD,
-    }
-}
-
-
-
-
-
 
 
 ## Allow Pdf Previewer
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 
+# Quick-start development settings - unsuitable for production
+# See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
+SECRET_KEY = secrets.SECRET_KEY
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = True
+
+ALLOWED_HOSTS = secrets.HOSTS
+
+SERVER_EMAIL = 'niklas.heidler@hotmail.de'
 
 # Application definition
 
@@ -63,6 +48,8 @@ INSTALLED_APPS = [
     'content',
     'export',
     'debug_toolbar',
+    'reversion',  # https://github.com/etianen/django-reversion
+    'reversion_compare',  # https://github.com/jedie/django-reversion-compare
 ]
 
 MIDDLEWARE = [
@@ -75,6 +62,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'reversion.middleware.RevisionMiddleware',
 ]
 
 ROOT_URLCONF = 'collab_coursebook.urls'
@@ -95,6 +83,25 @@ TEMPLATES = [
     },
 ]
 
+WSGI_APPLICATION = 'collab_coursebook.wsgi.application'
+
+# Database
+# https://docs.djangoproject.com/en/3.0/ref/settings/#databases
+
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'HOST': 'localhost',
+        'NAME': secrets.DB_NAME,
+        'USER': secrets.DB_USER,
+        'PASSWORD': secrets.DB_PASSWORD,
+    }
+}
+
+
+# Password validation
+# https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -111,18 +118,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends.ModelBackend',
-    'django_cas_ng.backends.CASBackend',
-)
-
-CAS_SERVER_URL = "https://sso.tu-darmstadt.de/"
-CAS_APPLY_ATTRIBUTES_TO_USER = True
-CAS_RENAME_ATTRIBUTES = {
-    'surname': 'last_name',
-    'givenName': 'first_name',
-    'mail': 'email',
-}
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
@@ -144,7 +139,7 @@ LOCALE_PATHS = [
     '/frontend/locale'
 ]
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'CET'
 
 USE_I18N = True
 
@@ -152,6 +147,19 @@ USE_L10N = True
 
 USE_TZ = True
 
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/3.0/howto/static-files/
+
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Used for Debug Toolbar
+INTERNAL_IPS = [
+    '127.0.0.1',
+]
 
 # Settings for Bootstrap
 BOOTSTRAP4 = {
@@ -173,8 +181,9 @@ FOOTER_INFO = {
 
 ALLOW_PUBLIC_COURSE_EDITING_BY_EVERYONE = True
 
-
-
-
-
+# Add reversion models to admin interface:
+ADD_REVERSION_ADMIN=True
+# optional settings:
+REVERSION_COMPARE_FOREIGN_OBJECTS_AS_ID=False
+REVERSION_COMPARE_IGNORE_NOT_REGISTERED=False
 
