@@ -1,0 +1,231 @@
+"""Purpose of this file
+
+This file describes the configuration of frontend including the templates and tags.
+"""
+
+import re
+
+from django import template
+from django.conf import settings
+
+from base.models import Favorite
+
+from collab_coursebook.settings import ALLOW_PUBLIC_COURSE_EDITING_BY_EVERYONE
+
+from content.models import CONTENT_TYPES
+
+register = template.Library()
+
+
+@register.filter
+def message_bootstrap_class(tag):
+    """Message bootstrap
+
+    Translate django message class into bootstrap class.
+
+    :param tag: The django message class
+    :type tag: str
+
+    :return: the bootstrap alert class
+    :rtype: str
+    """
+    if tag == "error":
+        return "alert-danger"
+    elif tag == "success":
+        return "alert-success"
+    elif tag == "warning":
+        return "alert-warning"
+    return "alert-info"
+
+
+@register.simple_tag
+def footer_info():
+    """Footer info
+
+    Gets footer info from settings.
+
+    :return: the footer info
+    :rtype: dict[str, str]
+    """
+    return settings.FOOTER_INFO
+
+
+@register.filter
+def count_content(topic_queryset):
+    """Count content
+
+    This method counts the contents of the topics in a queryset.
+
+    :param topic_queryset: The queryset
+    :type topic_queryset: QuerySet[Topic]
+
+    :return: the number of contents
+    :rtype: str
+    """
+    count = 0
+    for topic in topic_queryset:
+        count += len(topic.get_contents("None", "None"))
+    return str(count)
+
+
+@register.filter
+def rev_range(arg):
+    """Review range
+
+    Returns range of review.
+
+    :param arg: The range
+    :type arg: int
+
+    :return: the range of review
+    :rtype: Iterator[_T]
+    """
+    return reversed(range(1, arg + 1))
+
+
+@register.filter
+def content_view(content_type):
+    """Content view
+
+    Gets matching view for type.
+
+    :param content_type: The type of the content
+    :type content_type: str
+
+    :return: the path to the matching view for the type
+    :rtype: str
+    """
+    if content_type in CONTENT_TYPES.keys():
+        return f"content/view/{content_type}.html"
+    return "content/view/invalid.html"
+
+
+@register.filter
+def content_card(content_type):
+    """Content card
+
+    Gets the matching view for the type.
+
+    :param content_type: The type of the content
+    :type content_type: str
+
+    :return: the path to the matching view for the type
+    :rtype: str
+    """
+    if content_type in CONTENT_TYPES.keys():
+        return f"content/cards/{content_type}.html"
+    return "content/cards/blank.html"
+
+
+@register.filter
+def check_edit_course_permission(user, course):
+    """Edit course permission
+
+    Checks if either an user is an owner or the course is public and it is allowed
+    to edit public courses.
+
+    :param user: The user to check permission
+    :type user: User
+    :param course: The course to check permission
+    :type course: Course
+
+    :return: true if the course can be edited
+    :rtype: bool
+    """
+    return (user.profile in course.owners.all()) or (not course.restrict_changes
+                                                     and ALLOW_PUBLIC_COURSE_EDITING_BY_EVERYONE)
+
+
+@register.filter
+def check_profile_permissions(user, profile):
+    """
+    <TODO: Iteration 5>
+    :param user:
+    :param profile:
+    :return:
+    """
+    return (user.profile.pk == profile.pk or user.is_superuser)
+
+
+@register.filter
+def check_edit_content_permission(user, content):
+    """Edit content permission
+
+    Checks if either an user is an owner or the user is an super user and it is
+    allowed to edit the content.
+
+    :param user: The user to check permission
+    :type user: User
+    :param content: The content to check permission
+    :type content: Content
+
+    :return: true if the content can be edited
+    :rtype: bool
+    """
+    if content.readonly:
+        return content.author.pk == user.pk or user.is_superuser
+    return True
+
+
+@register.inclusion_tag("frontend/course/dropdown_topic.html")
+def add_content_button(user, course_id, topic_id):
+    """Content button
+
+    Generates a dropdown-button containing a list of available content types.
+
+    :param user: The user to check permission
+    :type user: User
+    :param course_id: The id of the course
+    :type course_id: int
+    :param topic_id: The id of the topic
+    :type topic_id: int
+
+    :return: The dropdown button as html div
+    :rtype: dict[str, Any]
+    """
+    # Generates a list of tuple (content type, content verbose name) for add content dropdown
+    content_data = [(content_type, content_model.DESC)
+                    for content_type, content_model in CONTENT_TYPES.items()]
+    return {'user': user,
+            'course_id': course_id,
+            'topic_id': topic_id,
+            'content_data': content_data}
+
+
+@register.filter
+def get_coursebook(user, course):
+    """Get coursebook
+
+    Returns the course book from the from the favourites of the user with the given curse.
+
+    :param user: The user
+    :type user: User
+    :param course: The course
+    :type course: Course
+
+    :return: the coursebook
+    :rtype: list[Content]
+    """
+    favorites = Favorite.objects.filter(user=user.profile, course=course)
+    coursebook = [favorite.content for favorite in favorites]
+    return coursebook
+
+
+def js_escape(value):
+    """JavaScript escape
+
+    Escapes the characters from python string to JavaScrip string.
+
+    :param value: The string to be escaped
+    :type value: str
+
+    :return: the escaped string
+    :rtype: str
+    """
+    replacements = {
+        '\\': '\\\\',
+        '\n': '\\n'
+    }
+
+    regex = re.compile('|'.join(re.escape(key) for key in replacements))
+    return regex.sub(lambda match: replacements[match.group()], value)

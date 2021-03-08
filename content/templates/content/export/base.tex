@@ -1,0 +1,77 @@
+{% load cc_export_tags %}
+{% autoescape off %}
+
+\documentclass[a4paper]{article}
+
+%%% Packages
+%% Encoding
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+%% Language
+\usepackage[english, main = ngerman]{babel}
+\usepackage[babel]{csquotes}
+
+%% Graphics
+\usepackage{grffile}
+\usepackage{pdfpages}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{tikz}
+
+%%  Document dimensions
+\usepackage[left=1cm, right=1cm, top=2cm, bottom=2cm]{geometry}
+
+%% Hypertext
+\usepackage{hyperref}
+
+% Listing
+\usepackage{listings}
+
+% Math
+\usepackage{mathtools, amssymb, amsmath}
+
+
+% Colors
+\usepackage{xcolor}
+
+% Table
+\usepackage{booktabs}
+\usepackage{array}
+
+% max width for image content in export
+\usepackage[export]{adjustbox}
+%%% Settings
+
+%% Generate a latex graphic
+% 1: caption
+% 2: image path
+\newcommand*{\Image}[2]{
+    \begin{figure}[H]
+    	\centering
+    	\includegraphics[width=\textwidth]{#2}
+    	\caption{#1}
+    \end{figure}
+}
+
+%% Indent
+\setlength\parindent{0pt}
+
+%%% Title information
+
+{% if export_pdf %}
+\title{ {{ course.title|tex_escape }} }
+{% else %}
+\title{ {{ topic.title|tex_escape }} }
+{% endif %}
+
+\author{ {{user|tex_escape}} }
+
+% Document
+\begin{document}
+
+\maketitle
+
+%\end{document} gets appended in code
+
+{% endautoescape %}

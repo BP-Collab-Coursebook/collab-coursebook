@@ -1,0 +1,47 @@
+{% extends 'frontend/base_logged_in.html' %}
+
+{# Load the tag library #}
+{% load bootstrap4 %}
+{% load i18n %}
+{% load static %}
+{% load fontawesome_5 %}
+
+{% block title %}{% trans "Create a new course" %} - Collab Coursebook{% endblock %}
+
+{% block imports %}
+    {# CSS #}
+    <link rel="stylesheet" href="{% static 'vendor/chosen-js/chosen.css' %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap-chosen.css' %}">
+{% endblock %}
+
+{% block content %}
+    <h1>{% trans 'Create a new course' %}</h1>
+
+    {# Course form #}
+    <form method="post" class="post-form" enctype=multipart/form-data>
+        {% csrf_token %}
+        {% bootstrap_form form %}
+        {{ form.media }}
+
+        {# Form option #}
+        <div>
+            <button type="submit" class="btn btn-primary float-right">
+                {% fa5_icon 'plus-circle' 'fas' %} {% trans 'Create' %}
+            </button>
+            <a href="{% url 'frontend:dashboard' %}" class="btn btn-danger">
+                {% fa5_icon 'times' 'fas' %} {% trans 'Cancel' %}
+            </a>
+        </div>
+    </form>
+{% endblock %}
+
+{% block bottom_script %}
+    {# Load JavaScript #}
+    <script src="{% static 'vendor/chosen-js/chosen.jquery.js' %}"></script>
+
+    <script type='text/javascript'>
+        $(function () {
+            $(".chosen-select").chosen();
+        });
+    </script>
+{% endblock %}
