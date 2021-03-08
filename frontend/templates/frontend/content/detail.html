@@ -13,18 +13,22 @@
 {% endblock %}
 
 {% block content %}
+    {# Drop down actions #}
     <div class="float-right text-right">
         <div class="dropdown show">
             <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown"
                     aria-haspopup="true" aria-expanded="false">
-                {% trans "Actions" %}
+                {% trans 'Actions' %}
             </button>
 
+            {# Drop down menu #}
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
-                <a class="dropdown-item" href="
-                        {% url 'frontend:content-reading-mode' course.id topic.id content.id %}{% if ending %}{{ ending }}{% endif %}">
-                    {% fa5_icon 'eye' 'far' %} {% trans "Reading Mode" %}
+                <a class="dropdown-item"
+                   href="
+                           {% url 'frontend:content-reading-mode' course.id topic.id content.id %}{% if ending %}{{ ending }}{% endif %}">
+                    {% fa5_icon 'eye' 'far' %} {% trans 'Reading Mode' %}
                 </a>
+                {# Remove and add to course book option #}
                 {% if user.is_authenticated %}
                     {% if favorite %}
                         <a class="dropdown-item"
@@ -38,17 +42,16 @@
                         </a>
                     {% endif %}
 
-                    <div class="dropdown-divider">
+                    <div class="dropdown-divider"></div>
 
-                    </div>
-
+                    {# Edit option #}
                     {% if user|check_edit_content_permission:content %}
                         <a class="dropdown-item" href="{% url 'frontend:content-edit' course.id topic.id content.id %}">
                             {% fa5_icon 'pencil-alt' 'fas' %} {% trans 'Edit' %}
                         </a>
                     {% endif %}
 
-                    <!-- Who are allowed to view the history?  -->
+                    {# History view #}
                     {% if content.type == 'Textfield' %}
                         <a class="dropdown-item"
                            href="{% url 'frontend:textfield-history' course.id topic.id content.id %}">
@@ -83,6 +86,7 @@
                         </a>
                     {% endif %}
 
+                    {# Delete option #}
                     {% if isCurrentUserOwner or user.is_superuser or content.author.pk == user.pk %}
                         <a href="#" class="dropdown-item text-danger" data-toggle="modal"
                            data-target="#deleteContentModal">{% fa5_icon 'trash' 'fas' %} {% trans 'Delete' %}</a>
@@ -92,15 +96,8 @@
         </div>
     </div>
 
+    {# Back to course option #}
     <a href="
-
-
-
-
-
-
-
-
             {% url 'frontend:course' course.id %}{% if ending == '?coursebook=True' %}#coursebook{% else %}#{{ topic.title }}{% endif %}"
        class="">
         {% fa5_icon 'chevron-left' 'fas' %} {% trans "Back to course " %} <i>{{ course.title }}</i>
@@ -110,6 +107,7 @@
         {{ content.topic }}
     </h1>
 
+    {# Content information #}
     <h5>
         {% trans "By" %} <i>{{ content.author }}</i>
         &nbsp;&middot;&nbsp;
@@ -130,7 +128,7 @@
         </span>
     </h5>
 
-    <!-- Delete inline, for 'Delete Confirmation' bootstrap modal-->
+    {# Delete inline, for 'Delete Confirmation' bootstrap modal #}
     <div class="modal fade" id="deleteContentModal" tabindex="1" role="dialog" aria-labelledby="deleteContentModalLabel"
          aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -163,6 +161,7 @@
         </div>
     </div>
 
+    {# Description of the content #}
     <div style="margin-top: 50px;margin-bottom: 50px;">
         {% include content.type|content_view %}
         <div class="mt-5">
@@ -173,12 +172,12 @@
         </div>
     </div>
 
-    <!-- Attachment -->
+    {# Attachment gallery #}
     {% include "frontend/content/detail_attachment.html" %}
 
     <br>
 
-    <!-- Rating -->
+    {# Rating #}
     <h5>
         <a name="rating">
             {% trans "Rating" %}
@@ -216,11 +215,9 @@
         </form>
     {% endif %}
 
-    <div class="clearfix mb-4">
+    <div class="clearfix mb-4"></div>
 
-    </div>
-
-    <!-- Comment -->
+    {# Comment #}
     {% for comment in comments %}
         {% include "frontend/comment/comment.html" with course_id=course.id content_id=content.id %}
     {% endfor %}

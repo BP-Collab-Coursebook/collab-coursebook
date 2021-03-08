@@ -262,6 +262,7 @@ class EditCourseStructureView(DetailView, FormMixin):
         :return: the json data if there request is an ajax, else an bad http response
         :rtype:  JsonResponse
         """
+        self.object = self.get_object()
         form_create_topic = self.get_form()
         if form_create_topic.is_valid():
             # AJAX request
@@ -319,6 +320,27 @@ class CourseView(DetailView, FormMixin):
         """
         return reverse_lazy('frontend:dashboard')
 
+    def post_favourite(self, request):
+        """Post favourite
+
+        Update the favourites of the user who sends this request. The course will be added or
+        removed from the favourite list after this call.
+
+        :param request: The given request
+        :type request: HttpRequest
+
+        :return: a successful http response
+        :rtype: HttpResponse
+        """
+        # Identify the profile and the course
+        profile = get_user(request).profile
+        course = get_object_or_404(Course, pk=request.POST.get('course_pk'))
+        if request.POST.get('save') == 'true':
+            profile.stared_courses.add(course)
+        else:
+            profile.stared_courses.remove(course)
+        return HttpResponse()
+
     def post(self, request, *args, **kwargs):  # pylint: disable=unused-argument
         """Post
 
@@ -331,16 +353,26 @@ class CourseView(DetailView, FormMixin):
         :param kwargs: The keyword arguments
         :type kwargs: dict[str, Any]
 
-        :return: the result from form_valid / form_invalid depending on the result from is_valid
+        :return: the http response depending on the operation
         :rtype: HttpResponse
         """
+        # Add/remove favourite
+        if request.POST.get('save') is not None:
+            return self.post_favourite(request)
+        if request.POST.get('course_pk') is not None:
+            # Identify the profile and the course
+            profile = get_user(request).profile
+            course = get_object_or_404(Course, pk=request.POST.get('course_pk'))
+            print(course in profile.stared_courses.all())
+            return JsonResponse(data={'save': course in profile.stared_courses.all()})
+
         self.object = self.get_object()
         form = self.get_form()
         if form.is_valid():
             return self.form_valid(form)
 
         # Edit course structure cancel/save
-        elif request.is_ajax():
+        if request.is_ajax():
             check = True
             # Update course structure
             topic_list = request.POST.get('topic_list')
@@ -354,7 +386,7 @@ class CourseView(DetailView, FormMixin):
                     JsonHandler.json_to_topics_structure(self.object, json_obj)
 
             # Clean unused topics
-            ids = request.POST.get('ids[]')
+            ids = request.POST.getlist('ids[]')
             if ids:
                 JsonHandler.clean_topics(ids)
 
@@ -391,6 +423,8 @@ class CourseView(DetailView, FormMixin):
         :rtype: dict[str, Any]
         """
         context = super().get_context_data(**kwargs)
+        data = {'filter': self.filtered_by, 'sort': self.sorted_by}
+        context['filter_sort'] = FilterAndSortForm(data=data)
         structure_entries = CourseStructureEntry. \
             objects.filter(course=context["course"]).order_by('index')
 
@@ -462,7 +496,7 @@ class CourseDeleteView(LoginRequiredMixin, DeleteView):
     :type CourseDeleteView.template_name: str
     """
     model = Course
-    template_name = 'frontend/course/delete_confirm.html'
+    template_name = 'frontend/course/view.html'
 
     def get_success_url(self):
         """Success url
@@ -512,38 +546,3 @@ class CourseDeleteView(LoginRequiredMixin, DeleteView):
         message = _("Course %(title)s successfully deleted") % {'title': self.get_object().title}
         messages.success(request, message, extra_tags="alert-success")
         return super().delete(self, request, *args, **kwargs)
-
-
-def add_remove_favourites(request, pk):  # pylint: disable=invalid-name
-    """Add and remove favourites
-
-    Add or removes the course from the favourites. If the course is already in the favourites
-    we remove it, else we add it.
-
-    :param request: The given request
-    :type request: HTTPRequest
-    :param pk: The course id
-    :type pk: int
-
-    :return: the redirection to the course page
-    :rtype: HttpResponse
-    """
-
-    # Identify the profile and the course
-    profile = get_user(request).profile
-    course = get_object_or_404(Course, pk=pk)
-
-    # If the course is already in the favourite set, remove it
-    if course in profile.stared_courses.all():
-        profile.stared_courses.remove(course)
-        message = _("Course %(title)s successfully removed from favourites") % {'title': course.title}
-        messages.success(request, message, extra_tags="alert-success")
-
-    # Otherwise add it to the favourite set
-    else:
-        profile.stared_courses.add(course)
-        message = _("Course %(title)s successfully added to favourites") % {'title': course.title}
-        messages.success(request, message, extra_tags="alert-success")
-
-    # Return to the course page afterwards
-    return HttpResponseRedirect(reverse_lazy('frontend:course', args=(pk,)))

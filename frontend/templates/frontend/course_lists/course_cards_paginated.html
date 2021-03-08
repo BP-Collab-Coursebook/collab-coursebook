@@ -1,3 +1,4 @@
+{# Load the tag library #}
 {% load i18n %}
 
 {% if courses %}
@@ -9,7 +10,7 @@
     </div>
 {% else %}
     <p>
-        {% trans "No matching courses found" %}
+        {% trans 'No matching courses found' %}
     </p>
 {% endif %}
 

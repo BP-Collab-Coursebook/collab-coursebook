@@ -1,5 +1,5 @@
-{% load i18n %}
 {# Load the tag library #}
+{% load i18n %}
 {% load bootstrap4 %}
 {% load fontawesome_5 %}
 {% load cc_frontend_tags %}
@@ -23,7 +23,7 @@
         <div class="collapse show" id="collapseCoursebook">
             <div class="card card-body">
                 {% if topic_contents|length > 0 %}
-                    {% include "frontend/course/topic_contents.html" %}
+                    {% include 'frontend/course/topic_contents.html' %}
                 {% else %}
                     <p>
                         {% trans 'Your coursebook is empty' %}

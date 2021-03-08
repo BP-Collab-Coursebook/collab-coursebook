@@ -8,23 +8,35 @@
 {% load i18n %}
 
 {% block imports %}
+    {# Load CSS #}
     <link href="{% static 'css/content_detail.css' %}" type="text/css" rel="stylesheet"/>
 {% endblock %}
 
 {% block content %}
     <form method="post" enctype=multipart/form-data>
+        {# Topic #}
+        <div class="form-group">
+            <label for="topic">
+                {% trans 'Topic' %}
+            </label>
+            <textfield
+                    disabled
+                    name="topic"
+                    class="form-control"
+                    style="height: 35px"
+                    id="topic">{{ topic }}
+            </textfield>
+        </div>
         {% csrf_token %}
-        {% bootstrap_form form %}
         {% bootstrap_form content_type_form %}
 
         <br>
-
+        {# Dynamic attachment for content types with attachments #}
         {% if attachment_allowed %}
             <div>
-                <h2 style="font-weight: bold" align="center">
+                <h2>
                     {% trans "Image Attachments" %}
                 </h2>
-                {% bootstrap_form attachment_form %}
                 {{ item_forms.management_form }}
                 <div id="items-form-container">
                     {% for item_form in item_forms %}
@@ -34,6 +46,7 @@
                         </div>
                     {% endfor %}
                 </div>
+                {# Attachments option #}
                 <button id="add-item-button" class="btn btn-primary add-item">
                     {% trans "Add attachment" %}
                 </button>
@@ -41,12 +54,16 @@
                     {% trans "Remove attachment" %}
                 </button>
             </div>
+            <br>
         {% endif %}
+
+        {% bootstrap_form form %}
 
         <br>
 
         {{ form.media }}
 
+        {# Form option #}
         <div>
             <button type="submit" class="btn btn-primary float-right">
                 {% fa5_icon 'plus-circle' 'fas' %} {% trans "Save" %}
@@ -57,12 +74,13 @@
         </div>
     </form>
 
+    {# Dynamic attachment template #}
     {% if attachment_allowed %}
         {% include "frontend/content/dynamic_attachment.html" %}
     {% endif %}
 
+    {# LaTeX embedded help for attachment #}
     {% if is_latex_content %}
         {% include "frontend/content/attachment_embedding_help.html" %}
     {% endif %}
-
 {% endblock %}

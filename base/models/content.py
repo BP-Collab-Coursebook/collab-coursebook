@@ -152,8 +152,8 @@ class Course(models.Model):
     owners = models.ManyToManyField(Profile, related_name='owned_courses',
                                     verbose_name=_("Owners"))
     restrict_changes = models.BooleanField(verbose_name=_("Edit Restriction"),
-                                           help_text=_("Is the course protected and "
-                                                       "can only be edited by the owners?"),
+                                           help_text=_("This course is restricted and "
+                                                       "can only be edited by the owners"),
                                            blank=True,
                                            default=False)
 
@@ -350,8 +350,6 @@ class Content(models.Model):
     :type Content.readonly: BooleanField
     :attr Content.public BooleanField: Describes the content visibility
     :type Content.public: BooleanField
-    :attr Content.attachment: Describes the attachment of the content
-    :type Content.attachment: OneToOneField - ImageAttachment
     :attr Content.creation_date: Describes when the content was created
     :type Content.creation_date: DateTimeField
     :attr Content.preview: The preview image of the content
@@ -379,19 +377,13 @@ class Content(models.Model):
                                   related_name='contents',
                                   blank=True)
 
-    readonly = models.BooleanField(verbose_name=_("Readonly"),
-                                   help_text=_("Can this content be updated?"),
+    readonly = models.BooleanField(verbose_name=_("Set to Read-Only"),
+                                   help_text=_("This content shouldn't be edited"),
                                    default=False)
-    public = models.BooleanField(verbose_name=_("Show in public courses?"),
-                                 help_text=_("May this content be displayed in courses "
-                                             "that don't require registration?"),
+    public = models.BooleanField(verbose_name=_("Show in public courses"),
+                                 help_text=_("This content will be displayed in courses "
+                                             "that don't require registration"),
                                  default=False)
-
-    attachment = models.OneToOneField('content.ImageAttachment',
-                                      verbose_name=_("Attachment"),
-                                      on_delete=models.CASCADE,
-                                      blank=True,
-                                      null=True)
     creation_date = models.DateTimeField(verbose_name=_('Creation Date'),
                                          default=timezone.now,
                                          blank=True)
@@ -458,7 +450,7 @@ class Content(models.Model):
         """
         rating = Rating.objects.filter(content_id=self.id).aggregate(Avg('rating'))['rating__avg']
         if rating is not None:
-            return rating
+            return int(rating)
         return -1
 
     def get_rate_count(self):
@@ -536,7 +528,7 @@ class CourseStructureEntry(models.Model):
 
     :attr CourseStructureEntry.course: The course whose structure is meant
     :type CourseStructureEntry.course: ForeignKey - Course
-    :attr CourseStructureEntry.index: The position that is meant (e.g. "1#2" -> second under topic
+    :attr CourseStructureEntry.index: The position that is meant (e.g. "1/2" -> second under topic
     of the first topic)
     :type CourseStructureEntry.index: CharField
     :attr CourseStructureEntry.topic: The topic at the specified position/index
@@ -581,4 +573,5 @@ reversion.register(Course,
 
 reversion.register(Content,
                    fields=['description', 'language',
-                           'tags', 'readonly', 'public', 'attachment'])
+                           'tags', 'readonly', 'public'],
+                   follow=['ImageAttachments'])

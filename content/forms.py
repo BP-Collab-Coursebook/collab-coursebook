@@ -4,10 +4,9 @@ This file contains forms associated with the content types.
 """
 
 from django import forms
-from django.forms import modelformset_factory
 
 from content.models import YTVideoContent, ImageContent, PDFContent
-from content.models import ImageAttachment, TextField, Latex, SingleImageAttachment
+from content.models import TextField, Latex
 from content.widgets import ModifiedClearableFileInput
 
 # str: Relative directory path of the forms examples
@@ -60,7 +59,7 @@ class AddContentFormYoutubeVideo(forms.ModelForm):
         :attr Meta.model: The model to which this form corresponds
         :type Meta.model: Model
         :attr Meta.fields: Including fields into the form
-        :type Meta.fields: list[str]
+        :type Meta.fields: str or list[str]
         """
         model = YTVideoContent
         fields = ['url']
@@ -80,9 +79,9 @@ class AddContentFormImage(forms.ModelForm):
         :attr Meta.model: The model to which this form corresponds
         :type Meta.model: Model
         :attr Meta.fields: Including fields into the form
-        :type Meta.fields: list[str]
-        :attr Meta.fields: Customization of the model form
-        :type Meta.fields: dict[str, Widget]
+        :type Meta.fields: str or list[str]
+        :attr Meta.widgets: Customization of the model form
+        :type Meta.widgets: dict[str, Widget]
         """
         model = ImageContent
         fields = ['image', 'source', 'license']
@@ -90,26 +89,6 @@ class AddContentFormImage(forms.ModelForm):
             'source': forms.Textarea(attrs={'style': 'height: 100px'}),
             'image': ModifiedClearableFileInput(attrs={'required': 'true'})
         }
-
-
-class AddContentFormAttachedImage(forms.ModelForm):
-    """Add attached image
-
-    This model represents the add form for image attachments
-    """
-
-    class Meta:
-        """Meta options
-
-        This class handles all possible meta options that you can give to this model.
-
-        :attr Meta.model: The model to which this form corresponds
-        :type Meta.model: Model
-        :attr Meta.fields: Including fields into the form
-        :type Meta.fields: list[str]
-        """
-        model = ImageAttachment
-        fields = []
 
 
 class AddContentFormPdf(forms.ModelForm):
@@ -126,9 +105,9 @@ class AddContentFormPdf(forms.ModelForm):
         :attr Meta.model: The model to which this form corresponds
         :type Meta.model: Model
         :attr Meta.fields: Including fields into the form
-        :type Meta.fields: list[str]
-        :attr Meta.fields: Customization of the model form
-        :type Meta.fields: dict[str, Widget]
+        :type Meta.fields: str or list[str]
+        :attr Meta.widgets: Customization of the model form
+        :type Meta.widgets: dict[str, Widget]
         """
         model = PDFContent
         fields = ['pdf', 'source']
@@ -153,9 +132,9 @@ class AddTextField(forms.ModelForm):
         :attr Meta.model: The model to which this form corresponds
         :type Meta.model: Model
         :attr Meta.fields: Including fields into the form
-        :type Meta.fields: list[str]
-        :attr Meta.fields: Customization of the model form
-        :type Meta.fields: dict[str, Widget]
+        :type Meta.fields: str or list[str]
+        :attr Meta.widgets: Customization of the model form
+        :type Meta.widgets: dict[str, Widget]
         """
         model = TextField
         fields = ['textfield', 'source']
@@ -184,9 +163,9 @@ class AddLatex(forms.ModelForm):
         :attr Meta.model: The model to which this form corresponds
         :type Meta.model: Model
         :attr Meta.fields: Including fields into the form
-        :type Meta.fields: list[str]
-        :attr Meta.fields: Customization of the model form
-        :type Meta.fields: dict[str, Widget]
+        :type Meta.fields: str or list[str]
+        :attr Meta.widgets: Customization of the model form
+        :type Meta.widgets: dict[str, Widget]
         """
         model = Latex
         fields = ['textfield', 'source']
@@ -199,17 +178,6 @@ class AddLatex(forms.ModelForm):
                 attrs={'placeholder': get_placeholder(Latex.TYPE, 'textfield')})
         }
 
-
-# BaseModelFormset: Image attachment form set
-SingleImageFormSet = modelformset_factory(
-    SingleImageAttachment,
-    fields=("source", "license", "image"),
-    extra=0,
-    widgets={
-        'source': forms.Textarea(attrs={'style': 'height: 100px', 'required': 'true'}),
-        'image': ModifiedClearableFileInput(attrs={'required': 'true'})
-    }
-)
 
 # dict[str, ModelForm]: Contains all available content types form.
 CONTENT_TYPE_FORMS = {
