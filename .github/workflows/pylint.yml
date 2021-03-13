@@ -2,9 +2,9 @@ name: PyLint Django
 
 on:
   push:
-    branches: [ main ]
+    branches: [ 06_main_pr ]
   pull_request:
-    branches: [ main ]
+    branches: [ 06_main_pr ]
 
 jobs:
   build:
